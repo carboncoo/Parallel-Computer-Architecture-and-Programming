@@ -115,6 +115,7 @@ int main(int argc, char** argv)
             break;
         case 't':
             useThrust = true;
+	    break;
         case '?':
         default:
             usage(argv[0]);

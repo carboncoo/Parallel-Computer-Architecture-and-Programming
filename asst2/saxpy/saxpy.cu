@@ -23,6 +23,7 @@ void
 saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) {
 
     int totalBytes = sizeof(float) * 3 * N;
+    int size = totalBytes / 3;
 
     // compute number of blocks and threads per block
     const int threadsPerBlock = 512;
@@ -36,6 +37,10 @@ saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) 
     // TODO allocate device memory buffers on the GPU using cudaMalloc
     //
 
+    cudaMalloc(&device_x, totalBytes/3);
+    cudaMalloc(&device_y, totalBytes/3);
+    cudaMalloc(&device_result, totalBytes/3);
+
     // start timing after allocation of device memory
     double startTime = CycleTimer::currentSeconds();
 
@@ -43,13 +48,22 @@ saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) 
     // TODO copy input arrays to the GPU using cudaMemcpy
     //
 
+
+    cudaMemcpy(device_x, xarray, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(device_y, yarray, size, cudaMemcpyHostToDevice);
+
+
+    double kernal_Computation_startTime = CycleTimer::currentSeconds();
     // run kernel
     saxpy_kernel<<<blocks, threadsPerBlock>>>(N, alpha, device_x, device_y, device_result);
     cudaThreadSynchronize();
-
+    double kernal_Computation_endTime = CycleTimer::currentSeconds();
+    printf("Overall: %.3f ms\t\t[%.3f GB/s]\n", 1000.f * (kernal_Computation_endTime - kernal_Computation_startTime), toBW(totalBytes, kernal_Computation_endTime - kernal_Computation_startTime));
     //
     // TODO copy result from GPU using cudaMemcpy
     //
+
+    cudaMemcpy(device_result, resultarray, size, cudaMemcpyHostToDevice);
 
     // end timing after result has been copied back into host memory
     double endTime = CycleTimer::currentSeconds();
@@ -63,6 +77,10 @@ saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) 
     printf("Overall: %.3f ms\t\t[%.3f GB/s]\n", 1000.f * overallDuration, toBW(totalBytes, overallDuration));
 
     // TODO free memory buffers on the GPU
+    cudaFree(device_x);
+    cudaFree(device_y);
+    cudaFree(device_result);
+
 }
 
 void
