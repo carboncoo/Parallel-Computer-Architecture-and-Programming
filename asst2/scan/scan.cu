@@ -28,6 +28,17 @@ static inline int nextPow2(int n)
     return n;
 }
 
+__global__ void 
+scan_upsweep_kernal(int N, int twod, int twod1, float *output) {
+
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    if(index < N)
+    {
+       output[index + twod1 - 1] += output[index + twod - 1]; 
+    }
+
+}
+
 void exclusive_scan(int* device_start, int length, int* device_result)
 {
     /* Fill in this function with your exclusive scan implementation.
@@ -39,6 +50,17 @@ void exclusive_scan(int* device_start, int length, int* device_result)
      * both the input and the output arrays are sized to accommodate the next
      * power of 2 larger than the input.
      */
+
+    const int threadsPerBlock = length;
+    const int blocks = (length + threadsPerBlock - 1) / threadsPerBlock;
+ 
+
+    for(int twod = 1; twod < length; twod*=2)
+    {
+        twod1 = 2*twod; 
+        scan_upsweep_kernal<<<blocks, threadsPerBlock>>>(length, twod, twod1, device_start);
+    }
+
 }
 
 /* This function is a wrapper around the code you will write - it copies the
