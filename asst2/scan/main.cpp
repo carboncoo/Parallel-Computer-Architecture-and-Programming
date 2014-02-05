@@ -6,7 +6,7 @@
 
 #include "CycleTimer.h"
 
-double cudaScan(int* start, int* end, int* resultarray);
+double cudaScan(int* start, int* end, int* resultarray, bool debug);
 double cudaScanThrust(int* start, int* end, int* resultarray);
 double cudaFindRepeats(int *start, int length, int *resultarray, int *output_length);
 void printCudaInfo();
@@ -71,7 +71,7 @@ void cpu_exclusive_scan(int* start, int* end, int* output)
 }
 
 /* Simple serial implementation of the find_repeats function
- * Your job is to implement this computation in parallel using your parallel 
+ * Your job is to implement this computation in parallel using your parallel
  * exclusive scan function.
  */
 int cpu_find_repeats(int *start, int length, int *output){
@@ -89,8 +89,9 @@ int cpu_find_repeats(int *start, int length, int *output){
 int main(int argc, char** argv)
 {
 
-    int N = 64;
+    int N = 128;
     bool useThrust = false;
+	bool debug = false;
     std::string testName;
 
 
@@ -101,10 +102,11 @@ int main(int argc, char** argv)
         {"input",      1, 0, 'i'},
         {"help",       0, 0, '?'},
         {"thrust",     0, 0, 't'},
+		{"debug",      0, 0, 'd'},
         {0 ,0, 0, 0}
     };
 
-    while ((opt = getopt_long(argc, argv, "?n:t", long_options, NULL)) != EOF) {
+    while ((opt = getopt_long(argc, argv, "?n:i:td", long_options, NULL)) != EOF) {
 
         switch (opt) {
         case 'n':
@@ -115,7 +117,10 @@ int main(int argc, char** argv)
             break;
         case 't':
             useThrust = true;
-	    break;
+            break;
+		case 'd':
+            debug = true;
+            break;
         case '?':
         default:
             usage(argv[0]);
@@ -141,24 +146,41 @@ int main(int argc, char** argv)
         }
     } else {
         //fixed test case - you may find this useful for debugging
+		//*
         srand(4); //random seed chosen by fair dice roll
         for(int i = 0; i < N; i++) {
             int val = rand() % 10;
             inarray[i] = val;
             checkarray[i] = val;
         }
+		//*/
+		
+		/*
+		for(int i = 0; i < N; i++) {
+            int val = 1;
+            inarray[i] = val;
+            checkarray[i] = val;
+        }
+		//*/
     }
 
     printCudaInfo();
+	
+	/*
+	for(int i=0;i<N;i++){
+		printf("%d, ", checkarray[i]);
+	}
+	printf("\n\n");
+	//*/
 
     //Test exclusive_scan
     double cudaTime = 50000.;
     // run CUDA implementation
-    for (int i=0; i<3; i++) {
+    for (int i=0; i<1; i++) {
         if (useThrust)
             cudaTime = std::min(cudaTime, cudaScanThrust(inarray, inarray+N, resultarray));
         else
-            cudaTime = std::min(cudaTime, cudaScan(inarray, inarray+N, resultarray));
+            cudaTime = std::min(cudaTime, cudaScan(inarray, inarray+N, resultarray, debug));
     }
     printf("CUDA scan time: %.3f ms\n", 1000.f * cudaTime);
 
@@ -188,13 +210,22 @@ int main(int argc, char** argv)
     }
     printf("Scan outputs are correct!\n\n");
 
+	
     // Test find_repeats
     cudaTime = 50000.;
     // run CUDA implementation
     int cu_size;
-    for (int i=0; i<3; i++) {
-        cudaTime = std::min(cudaTime, 
+/*printf("INPUT: ");
+for(int i=0;i<N;i++){
+    printf("%d, ", inarray[i]);
+}
+printf("\n");*/
+
+
+    for (int i=0; i<1; i++) {
+        cudaTime = std::min(cudaTime,
                             cudaFindRepeats(inarray, N, resultarray, &cu_size));
+        //printf("CUDA time: %.3f cudaTime\n", 1000.f * cudaTime);
     }
     printf("CUDA find_repeats time: %.3f ms\n", 1000.f * cudaTime);
 
@@ -213,7 +244,7 @@ int main(int argc, char** argv)
 
     // validate results
     if(serial_size != cu_size){
-        fprintf(stderr, 
+        fprintf(stderr,
                 "Error: Device find_repeats outputs incorrect size. "
                 "Expected %d, got %d.\n",
                 serial_size, cu_size);
@@ -230,7 +261,8 @@ int main(int argc, char** argv)
         }
     }
     printf("find_repeats outputs are correct!\n");
-
+	
+	
     delete[] inarray;
     delete[] resultarray;
     delete[] checkarray;
