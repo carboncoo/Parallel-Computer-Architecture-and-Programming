@@ -77,15 +77,20 @@ __global__ void scan_block(int* input, int* array, int threads_per_block, int N)
 	array[globalIndex] = val;
 }
 
-__global__ void scan_combine(int* array, int scaned_width, int threads_num, int N){
+__global__ void thread_add(int* array, int scaned_width, int length, int* val){
+	int index = blockIdx.x*BLOCK_SIZE + scaned_width + threadIdx.x;
+	if(index<length)array[index] += val[index/scaned_width];
+}
+
+__global__ void scan_combine(int* array, int scaned_width, int threads_num, int N, int* vals){
 	__shared__ int partialSum[BLOCK_SIZE];
 	
 	int globalStartIndex = (blockIdx.x*threads_num + threadIdx.x)*scaned_width;
 	if(globalStartIndex>N-1)return;
-	int globalEndIndex = globalStartIndex + scaned_width - 1;
-	if(globalEndIndex>N-1)globalEndIndex=N-1;
+	int globalEndIndex = globalStartIndex + scaned_width;
+	if(globalEndIndex>N)globalEndIndex=N;
 	
-	partialSum[threadIdx.x] = array[globalEndIndex];
+	partialSum[threadIdx.x] = array[globalEndIndex-1];
 	
 	__syncthreads();
 	
@@ -120,10 +125,8 @@ __global__ void scan_combine(int* array, int scaned_width, int threads_num, int 
 	if(warpid > 0){
 		val += partialSum[warpid - 1]; //Step 4: apply bases to all elements
 	}
-		
-	for(int i=0;i<scaned_width;i++){
-		array[globalStartIndex+i] += val;
-	}
+	
+	vals[blockIdx.x*BLOCK_SIZE + threadIdx.x] = val;
 }
 
 void exclusive_scan(int* device_start, int length, int* device_result)
@@ -151,10 +154,15 @@ void exclusive_scan(int* device_start, int length, int* device_result)
 		blocks++;
 	}
 	
+	int roundblock = blocks;
+	
 	scan_block<<<blocks, threads>>>(device_start, device_result, threads, length);
 	cudaThreadSynchronize();
 	
 	if(blocks > 1){
+		int* device_val;
+		cudaMalloc((void **)&device_val, sizeof(int) * blocks);
+		
 		threads = blocks;
 		blocks = 1;
 		int scaned_width = BLOCK_SIZE;
@@ -164,14 +172,27 @@ void exclusive_scan(int* device_start, int length, int* device_result)
 			if(threads%BLOCK_SIZE!=0)blocks++;
 			threads = BLOCK_SIZE;
 			
-			scan_combine<<<blocks, threads>>>(device_result, scaned_width, threads, length);
+			scan_combine<<<blocks, threads>>>(device_result, scaned_width, threads, length, device_val);
+			cudaThreadSynchronize();
+			
+			roundblock = (length-scaned_width)/BLOCK_SIZE;
+			roundblock = (length-scaned_width)%BLOCK_SIZE!=0 ? roundblock+1 : roundblock;
+			
+			thread_add<<<roundblock, BLOCK_SIZE>>>(device_result, scaned_width, length, device_val);
+			cudaThreadSynchronize();
 			
 			threads = blocks;
 			blocks = 1;
 			scaned_width *= BLOCK_SIZE;
 		}
 		
-		scan_combine<<<blocks, threads>>>(device_result, scaned_width, threads, length);
+		scan_combine<<<blocks, threads>>>(device_result, scaned_width, threads, length, device_val);
+		cudaThreadSynchronize();
+		
+		roundblock = (length-scaned_width)/BLOCK_SIZE;
+		roundblock = (length-scaned_width)%BLOCK_SIZE!=0 ? roundblock+1 : roundblock;
+		thread_add<<<roundblock, BLOCK_SIZE>>>(device_result, scaned_width, length, device_val);
+		cudaThreadSynchronize();
 	}
 }
 
