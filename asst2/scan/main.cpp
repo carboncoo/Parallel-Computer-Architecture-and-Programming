@@ -6,7 +6,7 @@
 
 #include "CycleTimer.h"
 
-double cudaScan(int* start, int* end, int* resultarray, bool debug);
+double cudaScan(int* start, int* end, int* resultarray);
 double cudaScanThrust(int* start, int* end, int* resultarray);
 double cudaFindRepeats(int *start, int length, int *resultarray, int *output_length);
 void printCudaInfo();
@@ -91,7 +91,6 @@ int main(int argc, char** argv)
 
     int N = 128;
     bool useThrust = false;
-	bool debug = false;
     std::string testName;
 
 
@@ -106,7 +105,7 @@ int main(int argc, char** argv)
         {0 ,0, 0, 0}
     };
 
-    while ((opt = getopt_long(argc, argv, "?n:i:td", long_options, NULL)) != EOF) {
+    while ((opt = getopt_long(argc, argv, "?n:i:t", long_options, NULL)) != EOF) {
 
         switch (opt) {
         case 'n':
@@ -117,9 +116,6 @@ int main(int argc, char** argv)
             break;
         case 't':
             useThrust = true;
-            break;
-		case 'd':
-            debug = true;
             break;
         case '?':
         default:
@@ -180,7 +176,7 @@ int main(int argc, char** argv)
         if (useThrust)
             cudaTime = std::min(cudaTime, cudaScanThrust(inarray, inarray+N, resultarray));
         else
-            cudaTime = std::min(cudaTime, cudaScan(inarray, inarray+N, resultarray, debug));
+            cudaTime = std::min(cudaTime, cudaScan(inarray, inarray+N, resultarray));
     }
     printf("CUDA scan time: %.3f ms\n", 1000.f * cudaTime);
 
@@ -210,18 +206,12 @@ int main(int argc, char** argv)
     }
     printf("Scan outputs are correct!\n\n");
 
-	
+	//*
     // Test find_repeats
     cudaTime = 50000.;
     // run CUDA implementation
     int cu_size;
-/*printf("INPUT: ");
-for(int i=0;i<N;i++){
-    printf("%d, ", inarray[i]);
-}
-printf("\n");*/
-
-
+	
     for (int i=0; i<1; i++) {
         cudaTime = std::min(cudaTime,
                             cudaFindRepeats(inarray, N, resultarray, &cu_size));
@@ -261,7 +251,7 @@ printf("\n");*/
         }
     }
     printf("find_repeats outputs are correct!\n");
-	
+	//*/
 	
     delete[] inarray;
     delete[] resultarray;

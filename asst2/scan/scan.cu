@@ -14,6 +14,7 @@
 #include "CycleTimer.h"
 
 #define BLOCK_SIZE 128
+#define WARP_WIDTH 32
 
 extern float toBW(int bytes, float sec);
 
@@ -31,34 +32,16 @@ static inline int nextPow2(int n)
     return n;
 }
 
-__global__ void scan_warp(int* array, int threadIndex){
-	int lane = threadIndex & 31; //index of thread in wrap (0...31)
-	
-	if(lane >= 1){
-		array[threadIndex] += array[threadIndex - 1];
-	}
-	if(lane >= 2){
-		array[threadIndex] += array[threadIndex - 2];
-	}
-	if(lane >= 4){
-		array[threadIndex] += array[threadIndex - 4];
-	}
-	if(lane >= 8){
-		array[threadIndex] += array[threadIndex - 8];
-	}
-	if(lane >= 16){
-		array[threadIndex] += array[threadIndex - 16];
-	}
-	//return (lane>0) ? array[threadIndex - 1] : 0;
-}
-
-__global__ void scan_block(int* input, int* array, int warp_width, int threads_per_block, int* device_debug, int N){
+__global__ void scan_block(int* input, int* array, int threads_per_block, int N){
 	int globalIndex = blockIdx.x*threads_per_block + threadIdx.x;
-	int lane = threadIdx.x & (warp_width-1);
-	int warpid = threadIdx.x / warp_width;
+	
+	if(globalIndex>(N-1))return;
+	
+	int lane = threadIdx.x & (WARP_WIDTH-1);
+	int warpid = threadIdx.x / WARP_WIDTH;
 	int globalWarpId = blockIdx.x*threads_per_block + warpid;
 	
-	for(int i=1;i<warp_width;i*=2){
+	for(int i=1;i<WARP_WIDTH;i*=2){
 		if(lane >= i){
 			array[globalIndex] += array[globalIndex - i];
 		}
@@ -68,18 +51,17 @@ __global__ void scan_block(int* input, int* array, int warp_width, int threads_p
 	if(blockIdx.x>0){
 		val += input[blockIdx.x*threads_per_block-1];
 	}
-	device_debug[globalIndex] = val;
 	
 	__syncthreads();
 	
-	if(lane == (warp_width-1)){
+	if(lane == (WARP_WIDTH-1)){
 		array[globalWarpId] = array[globalIndex]; //Step 2: copy partial-scan bases
 	}
 	
 	__syncthreads();
 	
-	if(warpid == 0 && threadIdx.x<(threads_per_block/warp_width)){ //Step 3: scan to accumulate bases
-		for(int i=1;i<warp_width;i*=2){
+	if(warpid == 0 && threadIdx.x<(threads_per_block/WARP_WIDTH)){ //Step 3: scan to accumulate bases
+		for(int i=1;i<WARP_WIDTH;i*=2){
 			if(lane >= i){
 				array[globalIndex] += array[globalIndex - i];
 			}
@@ -93,38 +75,61 @@ __global__ void scan_block(int* input, int* array, int warp_width, int threads_p
 	__syncthreads();
 	
 	array[globalIndex] = val;
-	
-	/*
-	__syncthreads();
-	if(blockIdx.x==0 && threadIdx.x==0){
-		printf("Array_block_0:");
-		for(int i=0;i<N;i++){
-			printf("%d, ", array[i]);
-		}
-		printf("\n");
-	}
-	__syncthreads();
-	*/
 }
 
-__global__ void scan_combine(int* array, int scaned_width, int threads_num){
+__global__ void thread_add(int* array, int scaned_width, int length, int* val){
+	int index = blockIdx.x*BLOCK_SIZE + scaned_width + threadIdx.x;
+	if(index<length)array[index] += val[index/scaned_width];
+}
+
+__global__ void scan_combine(int* array, int scaned_width, int threads_num, int N, int* vals){
+	__shared__ int partialSum[BLOCK_SIZE];
+	
 	int globalStartIndex = (blockIdx.x*threads_num + threadIdx.x)*scaned_width;
+	if(globalStartIndex>N-1)return;
+	int globalEndIndex = globalStartIndex + scaned_width;
+	if(globalEndIndex>N)globalEndIndex=N;
 	
-	int sumBase = 0;
-	int partialSumIndexBase = (blockIdx.x*threads_num + 1)*scaned_width - 1;
-	for(int i=0;i<(threadIdx.x);i++){
-		sumBase += array[partialSumIndexBase + i*scaned_width];
+	partialSum[threadIdx.x] = array[globalEndIndex-1];
+	
+	__syncthreads();
+	
+	int lane = threadIdx.x & (WARP_WIDTH-1);
+	int warpid = threadIdx.x / WARP_WIDTH;
+	
+	for(int i=1;i<WARP_WIDTH;i*=2){
+		if(lane >= i){
+			partialSum[threadIdx.x] += partialSum[threadIdx.x - i];
+		}
+	}
+
+	int val = lane>0 ? partialSum[threadIdx.x - 1] : 0; //Step 1: per-warp partial scan
+	
+	__syncthreads();
+	
+	if(lane == (WARP_WIDTH-1)){
+		partialSum[warpid] = partialSum[threadIdx.x]; //Step 2: copy partial-scan bases
 	}
 	
 	__syncthreads();
 	
-	for(int j=0;j<scaned_width;j++){
-		array[globalStartIndex+j] += sumBase;
+	if(warpid == 0){ //Step 3: scan to accumulate bases
+		for(int i=1;i<WARP_WIDTH;i*=2){
+			if(lane >= i){
+				partialSum[threadIdx.x] += partialSum[threadIdx.x - i];
+			}
+		}
 	}
 	__syncthreads();
+	
+	if(warpid > 0){
+		val += partialSum[warpid - 1]; //Step 4: apply bases to all elements
+	}
+	
+	vals[blockIdx.x*BLOCK_SIZE + threadIdx.x] = val;
 }
 
-void exclusive_scan(int* device_start, int length, int* device_result, int* device_debug)
+void exclusive_scan(int* device_start, int length, int* device_result)
 {
     /* Fill in this function with your exclusive scan implementation.
      * You are passed the locations of the input and output in device memory,
@@ -135,72 +140,67 @@ void exclusive_scan(int* device_start, int length, int* device_result, int* devi
      * both the input and the output arrays are sized to accommodate the next
      * power of 2 larger than the input.
      */
-	
-	
-	int roundlen = nextPow2(length);
-	
+		
 	//Maximum threads per block is 512
-	int threads_per_block = 128;
-	int block_width = 32;
 	
 	int blocks = 1;
-	int threads = roundlen;
-	if(roundlen>threads_per_block){
-		blocks = roundlen/threads_per_block;
-		threads = threads_per_block;
+	int threads = length;
+	if(length>BLOCK_SIZE){
+		blocks = length/BLOCK_SIZE;
+		threads = BLOCK_SIZE;
 	}
 	
-	double startTime = CycleTimer::currentSeconds();
-	scan_block<<<blocks, threads>>>(device_start, device_result, block_width, threads, device_debug, length);
+	if(length%BLOCK_SIZE!=0){
+		blocks++;
+	}
+	
+	int roundblock = blocks;
+	
+	scan_block<<<blocks, threads>>>(device_start, device_result, threads, length);
 	cudaThreadSynchronize();
-	double endTime = CycleTimer::currentSeconds();
-	//printf("Time for scan_block:%.3f ms\n", 1000.f * (endTime-startTime));
 	
-	/*
-	printf("Value:");
-	for(int i=0;i<length;i++){
-		printf("%d, ", device_result[i]);
-	}
-	printf("\n");
-	*/
-	
-	startTime = CycleTimer::currentSeconds();
 	if(blocks > 1){
+		int* device_val;
+		cudaMalloc((void **)&device_val, sizeof(int) * blocks);
+		
 		threads = blocks;
 		blocks = 1;
-		int scaned_width = threads_per_block;
+		int scaned_width = BLOCK_SIZE;
 		
-		while(threads > threads_per_block){
-			blocks = threads/threads_per_block;
-			threads = threads_per_block;
+		while(threads > BLOCK_SIZE){
+			blocks = threads/BLOCK_SIZE;
+			if(threads%BLOCK_SIZE!=0)blocks++;
+			threads = BLOCK_SIZE;
 			
-			scan_combine<<<blocks, threads>>>(device_result, scaned_width, threads);
+			scan_combine<<<blocks, threads>>>(device_result, scaned_width, threads, length, device_val);
+			cudaThreadSynchronize();
+			
+			roundblock = (length-scaned_width)/BLOCK_SIZE;
+			roundblock = (length-scaned_width)%BLOCK_SIZE!=0 ? roundblock+1 : roundblock;
+			
+			thread_add<<<roundblock, BLOCK_SIZE>>>(device_result, scaned_width, length, device_val);
+			cudaThreadSynchronize();
 			
 			threads = blocks;
 			blocks = 1;
-			scaned_width *= threads_per_block;
+			scaned_width *= BLOCK_SIZE;
 		}
 		
-		scan_combine<<<blocks, threads>>>(device_result, scaned_width, threads);
+		scan_combine<<<blocks, threads>>>(device_result, scaned_width, threads, length, device_val);
+		cudaThreadSynchronize();
+		
+		roundblock = (length-scaned_width)/BLOCK_SIZE;
+		roundblock = (length-scaned_width)%BLOCK_SIZE!=0 ? roundblock+1 : roundblock;
+		thread_add<<<roundblock, BLOCK_SIZE>>>(device_result, scaned_width, length, device_val);
+		cudaThreadSynchronize();
 	}
-	cudaThreadSynchronize();
-	endTime = CycleTimer::currentSeconds();
-
-/*int* scanhost = (int*)malloc(sizeof(int)*roundlen);
-cudaMemcpy(scanhost, device_result, roundlen*sizeof(int), cudaMemcpyDeviceToHost);
-printf("SCANN: ");
-for(int i=0;i<length;i++){
-    printf("%d, ", scanhost[i]);
-}
-printf("\n");*/
-	//printf("Time for scan_combine:%.3f ms\n", 1000.f * (endTime-startTime));
 }
 
 /* This function is a wrapper around the code you will write - it copies the
  * input to the GPU and times the invocation of the exclusive_scan() function
  * above. You should not modify it.
  */
-double cudaScan(int* inarray, int* end, int* resultarray, bool debug)
+double cudaScan(int* inarray, int* end, int* resultarray)
 {
     int* device_result;
     int* device_input; 
@@ -225,10 +225,8 @@ double cudaScan(int* inarray, int* end, int* resultarray, bool debug)
                cudaMemcpyHostToDevice);
 
     double startTime = CycleTimer::currentSeconds();
-    printf("Made it to cudaScan\n");	
-	int* device_debug;
-	cudaMalloc((void **)&device_debug, sizeof(int) * rounded_length);
-    exclusive_scan(device_input, end - inarray, device_result, device_debug);
+	
+    exclusive_scan(device_input, end - inarray, device_result);
 
     // Wait for any work left over to be completed.
     cudaThreadSynchronize();
@@ -274,35 +272,17 @@ __global__ void process_input(int* input, int length, int* tmp){
 	int index = blockIdx.x*BLOCK_SIZE + threadIdx.x;
 	if(index < length-1)
 		tmp[index] = (input[index+1]-input[index] == 0) ? 1 : 0;
-/*__syncthreads();
-if(blockIdx.x==0 && threadIdx.x==0){
-    printf("PROCE: ");
-    for(int i=0;i<length;i++){
-        printf("%d, ", tmp[i]);
-    }
-    printf("\n");
-}
-__syncthreads();*/
 }
 
 __global__ void repeats(int* deduct, int* scan, int* result, int length){
 	int index = blockIdx.x*BLOCK_SIZE + threadIdx.x;
-	if(index<length && deduct[index]==1)
+	if(index<length && deduct[index]==1){
 		result[scan[index]] = index;
-        __syncthreads();
-        if(blockIdx.x==0 && threadIdx.x==0){
-            scan[0] = scan[length-1];
-        }
-/*__syncthreads();
-if(blockIdx.x==0 && threadIdx.x==0){
-    printf("SCANN: ");
-    for(int i=0;i<length;i++){
-        printf("%d, ", scan[i]);
-    }
-    printf("\n");
-}
-__syncthreads();*/
-
+	}
+	__syncthreads();
+	if(blockIdx.x==0 && threadIdx.x==0){
+		scan[0] = scan[length-1];
+	}
 }
 
 int find_repeats(int *device_input, int length, int *device_output) {
@@ -317,39 +297,29 @@ int find_repeats(int *device_input, int length, int *device_output) {
      * it requires that. However, you must ensure that the results of
      * find_repeats are correct given the original length.
      */
-/*printf("INPUT: ");
-for(int i=0;i<length;i++){
-    printf("%d, ", device_input[i]);
-}
-printf("\n");*/
 	int roundlen = nextPow2(length);
-
-	int *device_debug;
-	cudaMalloc((void **)&device_debug, roundlen * sizeof(int));
 	
 	int *tmp_deduct;
-	cudaMalloc((void **)&tmp_deduct, roundlen * sizeof(int));
+	cudaMalloc((void **)&tmp_deduct, length * sizeof(int));
 	
 	int *tmp_scan;
-	cudaMalloc((void **)&tmp_scan, roundlen * sizeof(int));
+	cudaMalloc((void **)&tmp_scan, length * sizeof(int));
 	
-        int blocks = roundlen/BLOCK_SIZE;
-        if(blocks==0)blocks=1;
-        printf("call process_input \n"); 
+	int blocks = length/BLOCK_SIZE;
+	if(length%BLOCK_SIZE!=0)blocks++;
+	
 	process_input<<<blocks, BLOCK_SIZE>>>(device_input, length, tmp_deduct);
-        cudaThreadSynchronize();
+    cudaThreadSynchronize();
 
-        cudaMemcpy(tmp_scan, tmp_deduct, roundlen*sizeof(int), cudaMemcpyDeviceToDevice);
+    cudaMemcpy(tmp_scan, tmp_deduct, length*sizeof(int), cudaMemcpyDeviceToDevice);
 
-	exclusive_scan(tmp_deduct, roundlen, tmp_scan, device_debug);
-        cudaThreadSynchronize();
+	exclusive_scan(tmp_deduct, length, tmp_scan);
+    cudaThreadSynchronize();
 
-        repeats<<<blocks, BLOCK_SIZE>>>(tmp_deduct, tmp_scan, device_output, length);         
-        cudaThreadSynchronize();
-        int *host_scan = (int*)malloc(sizeof(int));
-        cudaMemcpy(host_scan, tmp_scan, sizeof(int), cudaMemcpyDeviceToHost);
-
-        //printf("Host scan is %d\n", *host_scan);
+	repeats<<<blocks, BLOCK_SIZE>>>(tmp_deduct, tmp_scan, device_output, length);         
+	cudaThreadSynchronize();
+	int *host_scan = (int*)malloc(sizeof(int));
+	cudaMemcpy(host_scan, tmp_scan, sizeof(int), cudaMemcpyDeviceToHost);
 
     return *host_scan;
 }
@@ -366,7 +336,7 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
                cudaMemcpyHostToDevice);
 
     double startTime = CycleTimer::currentSeconds();
-    printf("---------CALL FIND_REPEATS\n");    
+	
     int result = find_repeats(device_input, length, device_output);
 
     cudaThreadSynchronize();
