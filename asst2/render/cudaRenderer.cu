@@ -13,6 +13,8 @@
 #include "sceneLoader.h"
 #include "util.h"
 
+#define BUNDLESIZE 32
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // Putting all the cuda kernels here
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +32,18 @@ struct GlobalConstants {
     int imageWidth;
     int imageHeight;
     float* imageData;
+};
+
+struct RenderData {
+	//int id;
+	
+	//added
+	int valid;
+	int circleIndex;
+	float3 p;
+	
+	//struct RenderData *next;
+	//added end
 };
 
 // Global variable that is in scope, but read-only, for all cuda
@@ -183,85 +197,18 @@ __global__ void kernelAdvanceSnowflake() {
     *((float3*)velocityPtr) = velocity;
 }
 
-// shadePixel -- (CUDA device code)
-//
-// given a pixel and a circle, determines the contribution to the
-// pixel from the circle.  Update of the image is done in this
-// function.  Called by kernelRenderCircles()
-__device__ __inline__ void
-shadePixel(int circleIndex, float2 pixelCenter, float3 p, float4* imagePtr) {
-
-    float diffX = p.x - pixelCenter.x;
-    float diffY = p.y - pixelCenter.y;
-    float pixelDist = diffX * diffX + diffY * diffY;
-
-    float rad = cuConstRendererParams.radius[circleIndex];;
-    float maxDist = rad * rad;
-
-    // circle does not contribute to the image
-    if (pixelDist > maxDist)
-        return;
-
-    float3 rgb;
-    float alpha;
-
-    // there is a non-zero contribution.  Now compute the shading value
-
-    // suggestion: This conditional is in the inner loop.  Although it
-    // will evaluate the same for all threads, there is overhead in
-    // setting up the lane masks etc to implement the conditional.  It
-    // would be wise to perform this logic outside of the loop next in
-    // kernelRenderCircles.  (If feeling good about yourself, you
-    // could use some specialized template magic).
-    if (cuConstRendererParams.sceneName == SNOWFLAKES || cuConstRendererParams.sceneName == SNOWFLAKES_SINGLE_FRAME) {
-
-        const float kCircleMaxAlpha = .5f;
-        const float falloffScale = 4.f;
-
-        float normPixelDist = sqrt(pixelDist) / rad;
-        rgb = lookupColor(normPixelDist);
-
-        float maxAlpha = .6f + .4f * (1.f-p.z);
-        maxAlpha = kCircleMaxAlpha * fmaxf(fminf(maxAlpha, 1.f), 0.f); // kCircleMaxAlpha * clamped value
-        alpha = maxAlpha * exp(-1.f * falloffScale * normPixelDist * normPixelDist);
-
-    } else {
-        // simple: each circle has an assigned color
-        int index3 = 3 * circleIndex;
-        rgb = *(float3*)&(cuConstRendererParams.color[index3]);
-        alpha = .5f;
-    }
-
-    float oneMinusAlpha = 1.f - alpha;
-
-    // BEGIN SHOULD-BE-ATOMIC REGION
-    // global memory read
-
-    float4 existingColor = *imagePtr;
-    float4 newColor;
-    newColor.x = alpha * rgb.x + oneMinusAlpha * existingColor.x;
-    newColor.y = alpha * rgb.y + oneMinusAlpha * existingColor.y;
-    newColor.z = alpha * rgb.z + oneMinusAlpha * existingColor.z;
-    newColor.w = alpha + existingColor.w;
-
-    // global memory write
-    *imagePtr = newColor;
-
-    // END SHOULD-BE-ATOMIC REGION
-}
-
 // kernelRenderCircles -- (CUDA device code)
 //
 // Each thread renders a circle.  Since there is no protection to
 // ensure order of update or mutual exclusion on the output image, the
 // resulting image will be incorrect.
-__global__ void kernelRenderCircles() {
+__global__ void kernelRenderCircles(RenderData* bundles, int bundlesWidth, int numCircles) {
 
     int index = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (index >= cuConstRendererParams.numCircles)
         return;
-
+		
     int index3 = 3 * index;
 
     // read position and radius
@@ -283,19 +230,105 @@ __global__ void kernelRenderCircles() {
     short screenMinY = (minY > 0) ? ((minY < imageHeight) ? minY : imageHeight) : 0;
     short screenMaxY = (maxY > 0) ? ((maxY < imageHeight) ? maxY : imageHeight) : 0;
 
-    float invWidth = 1.f / imageWidth;
-    float invHeight = 1.f / imageHeight;
+    //float invWidth = 1.f / imageWidth;
+    //float invHeight = 1.f / imageHeight;
 
     // for all pixels in the bonding box
+	int bundleIndex;
     for (int pixelY=screenMinY; pixelY<screenMaxY; pixelY++) {
-        float4* imgPtr = (float4*)(&cuConstRendererParams.imageData[4 * (pixelY * imageWidth + screenMinX)]);
         for (int pixelX=screenMinX; pixelX<screenMaxX; pixelX++) {
-            float2 pixelCenterNorm = make_float2(invWidth * (static_cast<float>(pixelX) + 0.5f),
-                                                 invHeight * (static_cast<float>(pixelY) + 0.5f));
-            shadePixel(index, pixelCenterNorm, p, imgPtr);
-            imgPtr++;
+			
+			bundleIndex = (pixelY / BUNDLESIZE) * bundlesWidth + (pixelX / BUNDLESIZE);
+			bundleIndex = bundleIndex * numCircles + index;
+			
+			bundles[bundleIndex].valid = 1;
+			bundles[bundleIndex].circleIndex = index;
+			bundles[bundleIndex].p = p;
         }
     }
+}
+
+__global__ void renderPixels(int blockSize, int imgWidth, int imgHeight, int totalPixels, int bundlesWidth, int numCircles, RenderData* bundles){
+	int pixel1D = blockIdx.x * blockSize + threadIdx.x;
+	if(pixel1D >= totalPixels){
+		return;
+	}
+	
+	int pixelY = pixel1D / imgWidth;
+	int pixelX = pixel1D % imgWidth;
+	
+	int bundleIndex = ((pixelY/BUNDLESIZE)*bundlesWidth + (pixelX/BUNDLESIZE)) * numCircles;
+	float4* imgPtr = (float4*)(&cuConstRendererParams.imageData[4 * (pixelY * imgWidth + pixelX)]);
+	float2 pixelCenterNorm = make_float2((static_cast<float>(pixelX) + 0.5f)/imgWidth, (static_cast<float>(pixelY) + 0.5f)/imgHeight);
+	
+	float4 color = *imgPtr;
+	
+	RenderData data;
+	for(int i=0;i<numCircles;i++){
+		data = bundles[i+bundleIndex];
+		
+		if(data.valid == 1){
+			float3 p = data.p;
+			float diffX = p.x - pixelCenterNorm.x;
+			float diffY = p.y - pixelCenterNorm.y;
+			float pixelDist = diffX * diffX + diffY * diffY;
+
+			float rad = cuConstRendererParams.radius[data.circleIndex];;
+			float maxDist = rad * rad;
+
+			// circle does not contribute to the image
+			if (pixelDist > maxDist)
+				continue;
+
+			float3 rgb;
+			float alpha;
+
+			if (cuConstRendererParams.sceneName == SNOWFLAKES || cuConstRendererParams.sceneName == SNOWFLAKES_SINGLE_FRAME) {
+
+				const float kCircleMaxAlpha = .5f;
+				const float falloffScale = 4.f;
+
+				float normPixelDist = sqrt(pixelDist) / rad;
+				rgb = lookupColor(normPixelDist);
+
+				float maxAlpha = .6f + .4f * (1.f-p.z);
+				maxAlpha = kCircleMaxAlpha * fmaxf(fminf(maxAlpha, 1.f), 0.f); // kCircleMaxAlpha * clamped value
+				alpha = maxAlpha * exp(-1.f * falloffScale * normPixelDist * normPixelDist);
+
+			} else {
+				// simple: each circle has an assigned color
+				int index3 = 3 * data.circleIndex;
+				rgb = *(float3*)&(cuConstRendererParams.color[index3]);
+				alpha = .5f;
+			}
+
+			float oneMinusAlpha = 1.f - alpha;
+
+			// global memory read
+			color.x *= oneMinusAlpha;
+			color.x += alpha * rgb.x;
+			
+			color.y *= oneMinusAlpha;
+			color.y += alpha * rgb.y;
+			
+			color.z *= oneMinusAlpha;
+			color.z += alpha * rgb.z;
+			
+			color.w += alpha;
+		}
+	}
+	
+	// global memory write
+	*imgPtr = color;
+}
+
+__global__ void initBundles(RenderData* bundles, int blockwidth, int numCircles, int bundlesTotal){
+	int start = (blockIdx.x * blockwidth + threadIdx.x)*numCircles;
+	for(int i=0;i<numCircles;i++){
+		if(i+start < bundlesTotal){
+			bundles[i+start].valid = 0;
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -503,7 +536,34 @@ CudaRenderer::render() {
     // 256 threads per block is a healthy number
     dim3 blockDim(256, 1);
     dim3 gridDim((numCircles + blockDim.x - 1) / blockDim.x);
-
-    kernelRenderCircles<<<gridDim, blockDim>>>();
+	
+	int imgWidth = image->width;
+	int imgHeight = image->height;
+	
+	int bundlesWidth = (imgWidth + BUNDLESIZE - 1) / BUNDLESIZE;
+	int bundlesHeight = (imgHeight + BUNDLESIZE - 1) / BUNDLESIZE;
+	
+	int bundlesTotal = bundlesWidth * bundlesHeight * numCircles;
+	
+	RenderData* bundles;
+	cudaError_t errchk = cudaMalloc((void **)&bundles, sizeof(RenderData) * bundlesTotal);
+	if(errchk != cudaSuccess){
+		printf("Render, cudaMalloc bundles no enough memory!\n");
+		return;
+	}
+	
+	int bundlesBlocks = (bundlesWidth * bundlesHeight + blockDim.x - 1) / blockDim.x;
+	initBundles<<<bundlesBlocks, blockDim.x>>>(bundles, blockDim.x, numCircles, bundlesTotal);
+	cudaThreadSynchronize();
+	
+    kernelRenderCircles<<<gridDim, blockDim>>>(bundles, bundlesWidth, numCircles);
     cudaThreadSynchronize();
+	
+	int totalPixels = imgWidth*imgHeight;
+	int pixelBlocks = (totalPixels + blockDim.x - 1) / blockDim.x;
+	
+	renderPixels<<<pixelBlocks, blockDim.x>>>(blockDim.x, imgWidth, imgHeight, totalPixels, bundlesWidth, numCircles, bundles);
+	cudaThreadSynchronize();
+	
+	cudaFree(bundles);
 }
