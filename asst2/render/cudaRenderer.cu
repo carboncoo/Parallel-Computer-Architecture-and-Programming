@@ -13,7 +13,11 @@
 #include "sceneLoader.h"
 #include "util.h"
 
-#define BUNDLESIZE 32
+#include "cycleTimer.h"
+
+#define BUNDLESIZE		32
+#define PREFIXBLOCKSIZE	128
+#define WARP_WIDTH		32
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // Putting all the cuda kernels here
@@ -38,7 +42,7 @@ struct RenderData {
 	//int id;
 	
 	//added
-	int valid;
+	//int valid;
 	int circleIndex;
 	float3 p;
 	
@@ -202,7 +206,7 @@ __global__ void kernelAdvanceSnowflake() {
 // Each thread renders a circle.  Since there is no protection to
 // ensure order of update or mutual exclusion on the output image, the
 // resulting image will be incorrect.
-__global__ void kernelRenderCircles(RenderData* bundles, int bundlesWidth, int numCircles) {
+__global__ void kernelRenderCircles(RenderData* bundles, int* valids, int bundlesWidth, int numCircles) {
 
     int index = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -230,25 +234,47 @@ __global__ void kernelRenderCircles(RenderData* bundles, int bundlesWidth, int n
     short screenMinY = (minY > 0) ? ((minY < imageHeight) ? minY : imageHeight) : 0;
     short screenMaxY = (maxY > 0) ? ((maxY < imageHeight) ? maxY : imageHeight) : 0;
 
-    //float invWidth = 1.f / imageWidth;
-    //float invHeight = 1.f / imageHeight;
-
     // for all pixels in the bonding box
-	int bundleIndex;
-    for (int pixelY=screenMinY; pixelY<screenMaxY; pixelY++) {
-        for (int pixelX=screenMinX; pixelX<screenMaxX; pixelX++) {
-			
+	int bundleIndex, pixelX, pixelY;
+    for (pixelY=screenMinY; pixelY<screenMaxY; pixelY+=BUNDLESIZE) {
+        for (pixelX=screenMinX; pixelX<screenMaxX; pixelX+=BUNDLESIZE) {
 			bundleIndex = (pixelY / BUNDLESIZE) * bundlesWidth + (pixelX / BUNDLESIZE);
 			bundleIndex = bundleIndex * numCircles + index;
 			
-			bundles[bundleIndex].valid = 1;
+			valids[bundleIndex] = 1;
 			bundles[bundleIndex].circleIndex = index;
 			bundles[bundleIndex].p = p;
         }
+		if((pixelX-BUNDLESIZE)!=(screenMaxX-1)){
+			bundleIndex = (pixelY / BUNDLESIZE) * bundlesWidth + ((screenMaxX-1) / BUNDLESIZE);
+			bundleIndex = bundleIndex * numCircles + index;
+			
+			valids[bundleIndex] = 1;
+			bundles[bundleIndex].circleIndex = index;
+			bundles[bundleIndex].p = p;
+		}
     }
+	if((pixelY-BUNDLESIZE)!=(screenMaxY-1)){
+		for (pixelX=screenMinX; pixelX<screenMaxX; pixelX+=BUNDLESIZE) {
+			bundleIndex = ((screenMaxY-1) / BUNDLESIZE) * bundlesWidth + (pixelX / BUNDLESIZE);
+			bundleIndex = bundleIndex * numCircles + index;
+			
+			valids[bundleIndex] = 1;
+			bundles[bundleIndex].circleIndex = index;
+			bundles[bundleIndex].p = p;
+        }
+		if((pixelX-BUNDLESIZE)!=(screenMaxX-1)){
+			bundleIndex = ((screenMaxY-1) / BUNDLESIZE) * bundlesWidth + ((screenMaxX-1) / BUNDLESIZE);
+			bundleIndex = bundleIndex * numCircles + index;
+			
+			valids[bundleIndex] = 1;
+			bundles[bundleIndex].circleIndex = index;
+			bundles[bundleIndex].p = p;
+		}
+	}
 }
 
-__global__ void renderPixels(int blockSize, int imgWidth, int imgHeight, int totalPixels, int bundlesWidth, int numCircles, RenderData* bundles){
+__global__ void renderPixels(int blockSize, int imgWidth, int imgHeight, int totalPixels, int bundlesWidth, int numCircles, RenderData* bundles, int* valids){
 	int pixel1D = blockIdx.x * blockSize + threadIdx.x;
 	if(pixel1D >= totalPixels){
 		return;
@@ -264,73 +290,228 @@ __global__ void renderPixels(int blockSize, int imgWidth, int imgHeight, int tot
 	float4 color = *imgPtr;
 	
 	RenderData data;
-	for(int i=0;i<numCircles;i++){
+	int i=0;
+	for(;i<numCircles&&valids[i+bundleIndex]!=0;i++){
 		data = bundles[i+bundleIndex];
 		
-		if(data.valid == 1){
-			float3 p = data.p;
-			float diffX = p.x - pixelCenterNorm.x;
-			float diffY = p.y - pixelCenterNorm.y;
-			float pixelDist = diffX * diffX + diffY * diffY;
+		float3 p = data.p;
+		float diffX = p.x - pixelCenterNorm.x;
+		float diffY = p.y - pixelCenterNorm.y;
+		float pixelDist = diffX * diffX + diffY * diffY;
 
-			float rad = cuConstRendererParams.radius[data.circleIndex];;
-			float maxDist = rad * rad;
+		float rad = cuConstRendererParams.radius[data.circleIndex];;
+		float maxDist = rad * rad;
 
-			// circle does not contribute to the image
-			if (pixelDist > maxDist)
-				continue;
+		// circle does not contribute to the image
+		if (pixelDist > maxDist)
+			continue;
 
-			float3 rgb;
-			float alpha;
+		float3 rgb;
+		float alpha;
 
-			if (cuConstRendererParams.sceneName == SNOWFLAKES || cuConstRendererParams.sceneName == SNOWFLAKES_SINGLE_FRAME) {
+		if (cuConstRendererParams.sceneName == SNOWFLAKES || cuConstRendererParams.sceneName == SNOWFLAKES_SINGLE_FRAME) {
 
-				const float kCircleMaxAlpha = .5f;
-				const float falloffScale = 4.f;
+			const float kCircleMaxAlpha = .5f;
+			const float falloffScale = 4.f;
 
-				float normPixelDist = sqrt(pixelDist) / rad;
-				rgb = lookupColor(normPixelDist);
+			float normPixelDist = sqrt(pixelDist) / rad;
+			rgb = lookupColor(normPixelDist);
 
-				float maxAlpha = .6f + .4f * (1.f-p.z);
-				maxAlpha = kCircleMaxAlpha * fmaxf(fminf(maxAlpha, 1.f), 0.f); // kCircleMaxAlpha * clamped value
-				alpha = maxAlpha * exp(-1.f * falloffScale * normPixelDist * normPixelDist);
+			float maxAlpha = .6f + .4f * (1.f-p.z);
+			maxAlpha = kCircleMaxAlpha * fmaxf(fminf(maxAlpha, 1.f), 0.f); // kCircleMaxAlpha * clamped value
+			alpha = maxAlpha * exp(-1.f * falloffScale * normPixelDist * normPixelDist);
 
-			} else {
-				// simple: each circle has an assigned color
-				int index3 = 3 * data.circleIndex;
-				rgb = *(float3*)&(cuConstRendererParams.color[index3]);
-				alpha = .5f;
-			}
-
-			float oneMinusAlpha = 1.f - alpha;
-
-			// global memory read
-			color.x *= oneMinusAlpha;
-			color.x += alpha * rgb.x;
-			
-			color.y *= oneMinusAlpha;
-			color.y += alpha * rgb.y;
-			
-			color.z *= oneMinusAlpha;
-			color.z += alpha * rgb.z;
-			
-			color.w += alpha;
+		} else {
+			// simple: each circle has an assigned color
+			int index3 = 3 * data.circleIndex;
+			rgb = *(float3*)&(cuConstRendererParams.color[index3]);
+			alpha = .5f;
 		}
-	}
-	
+
+		float oneMinusAlpha = 1.f - alpha;
+
+		// global memory read
+		color.x *= oneMinusAlpha;
+		color.x += alpha * rgb.x;
+		
+		color.y *= oneMinusAlpha;
+		color.y += alpha * rgb.y;
+		
+		color.z *= oneMinusAlpha;
+		color.z += alpha * rgb.z;
+		
+		color.w += alpha;
+	}	
 	// global memory write
 	*imgPtr = color;
 }
 
-__global__ void initBundles(RenderData* bundles, int blockwidth, int numCircles, int bundlesTotal){
-	int start = (blockIdx.x * blockwidth + threadIdx.x)*numCircles;
-	for(int i=0;i<numCircles;i++){
-		if(i+start < bundlesTotal){
-			bundles[i+start].valid = 0;
+__global__ void scan_block(int* array, int bundleWidth){ //bundleWidth is number of circles
+	int inBundleIndex = blockIdx.y*PREFIXBLOCKSIZE + threadIdx.x;
+	
+	if(inBundleIndex>(bundleWidth-1))return;
+	
+	__shared__ int warp[PREFIXBLOCKSIZE/WARP_WIDTH];
+	
+	int globalBundleBase = blockIdx.x*bundleWidth;
+	int globalBundleIndex = globalBundleBase + inBundleIndex;
+	
+	int lane = threadIdx.x & (WARP_WIDTH-1);
+	int warpid = threadIdx.x / WARP_WIDTH;
+		
+	for(int i=1;i<WARP_WIDTH;i*=2){
+		if(lane >= i){
+			array[globalBundleIndex] += array[globalBundleIndex - i];
+		}
+	}
+	
+	int val = array[globalBundleIndex]; //Step 1: per-warp partial scan
+	
+	__syncthreads();
+	
+	if(lane == (WARP_WIDTH-1)){
+		warp[warpid] = val;
+	}
+	
+	__syncthreads();
+	
+	if(warpid == 0 && threadIdx.x<(PREFIXBLOCKSIZE/WARP_WIDTH)){ //Step 3: scan to accumulate bases
+		for(int i=1;i<PREFIXBLOCKSIZE/WARP_WIDTH;i*=2){
+			if(lane >= i){
+				warp[threadIdx.x] += warp[threadIdx.x-i];
+			}
+		}
+	}
+	__syncthreads();
+	
+	if(warpid > 0){
+		val += warp[warpid-1];
+	}
+	__syncthreads();
+	
+	array[globalBundleIndex] = val;
+}
+
+__global__ void thread_add(int* array, int scaned_width, int bundleWidth, int combineValGridY, int* val, int boundary, int bundlesTotal){
+	int index = blockIdx.y*PREFIXBLOCKSIZE + scaned_width + threadIdx.x;
+	int i=1;
+	while(index>=i*boundary)i++;
+	i--;
+	if(index>=boundary*i+scaned_width && index<(boundary*(i+1))){
+		int globalIndex = index+blockIdx.x*bundleWidth;
+		if(globalIndex<((blockIdx.x+1))*bundleWidth){
+			array[globalIndex] += val[blockIdx.x*combineValGridY + index/scaned_width - 1];			
 		}
 	}
 }
 
+__global__ void scan_combine(int* array, int scaned_width, int threads_num, int bundleWidth, int combineValGridY, int* vals){
+	__shared__ int partialSum[PREFIXBLOCKSIZE];
+	
+	int bundleStartIndex = (blockIdx.y*threads_num + threadIdx.x)*scaned_width;
+	if(bundleStartIndex>bundleWidth-1){
+		return;
+	}
+	int bundleEndIndex = bundleStartIndex + scaned_width;
+	if(bundleEndIndex>bundleWidth){
+		bundleEndIndex=bundleWidth;
+	}
+	
+	int gloableBase = blockIdx.x*bundleWidth;
+	
+	partialSum[threadIdx.x] = array[gloableBase + bundleEndIndex - 1];
+	
+	__syncthreads();
+	
+	int lane = threadIdx.x & (WARP_WIDTH-1);
+	int warpid = threadIdx.x / WARP_WIDTH;
+	
+	for(int i=1;i<WARP_WIDTH;i*=2){
+		if(lane >= i){
+			partialSum[threadIdx.x] += partialSum[threadIdx.x - i];
+		}
+	}
+
+	int val = partialSum[threadIdx.x]; //Step 1: per-warp partial scan
+	
+	__syncthreads();
+	
+	if(lane == (WARP_WIDTH-1)){
+		partialSum[warpid] = partialSum[threadIdx.x]; //Step 2: copy partial-scan bases
+	}
+	
+	__syncthreads();
+	
+	if(warpid == 0){ //Step 3: scan to accumulate bases
+		for(int i=1;i<WARP_WIDTH;i*=2){
+			if(lane >= i){
+				partialSum[threadIdx.x] += partialSum[threadIdx.x - i];
+			}
+		}
+	}
+	__syncthreads();
+	
+	if(warpid > 0){
+		val += partialSum[warpid - 1]; //Step 4: apply bases to all elements
+	}
+	
+	vals[combineValGridY*blockIdx.x + blockIdx.y*threads_num + threadIdx.x] = val;
+}
+
+__global__ void move_bundle(int* scaned, int* valid, RenderData* bundles, int bundleWidth){
+	int bundleIndex = blockIdx.y*PREFIXBLOCKSIZE + threadIdx.x;
+	if(bundleIndex<bundleWidth){
+		int base = blockIdx.x*bundleWidth;
+		int globalIndex = bundleIndex + base;
+		
+		if(valid[globalIndex]==1){
+			int moveToIndex = base+scaned[globalIndex]-1;
+			//bundles[moveToIndex].circleIndex = bundles[globalIndex].circleIndex;
+			//bundles[moveToIndex].p = bundles[globalIndex].p;
+			bundles[moveToIndex] = bundles[globalIndex];
+			valid[moveToIndex] = 1;
+		}
+		if(bundleIndex==bundleWidth-1 && scaned[globalIndex]<bundleWidth){
+			valid[scaned[globalIndex]+base] = 0;
+		}
+	}
+}
+
+__global__ void renderLittleCircle(int imgDim, float invWidth, float invHeight, int circleNum){
+	int globalIndex = blockIdx.x * 256 + threadIdx.x;
+	int pixelY = globalIndex / imgDim;
+	int pixelX = globalIndex % imgDim;
+	
+	float4* imgPtr = (float4*)(&cuConstRendererParams.imageData[4 * (pixelY * imgDim + pixelX)]);
+	
+	float pixelCenterX = invWidth * (static_cast<float>(pixelX) + 0.5f);
+	float pixelCenterY = invHeight * (static_cast<float>(pixelY) + 0.5f);
+	
+	float4 color = *imgPtr;
+	float3 rgb;
+	for(int i=0;i<circleNum;i++){
+		float3 p = *(float3*)(&cuConstRendererParams.position[i*3]);
+		float diffX = p.x - pixelCenterX;
+		float diffY = p.y - pixelCenterY;
+		float pixelDist = diffX * diffX + diffY * diffY;
+
+		float rad = cuConstRendererParams.radius[i];
+		float maxDist = rad * rad;
+
+		// circle does not contribute to the image
+		if (pixelDist > maxDist)
+			continue;
+
+		rgb = *(float3*)&(cuConstRendererParams.color[i*3]);
+
+		color.x = (color.x+rgb.x)*.5f;
+		color.y = (color.y+rgb.y)*.5f;
+		color.z = (color.z+rgb.z)*.5f;
+		color.w += .5f;
+	}
+
+    *imgPtr = color;
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -540,30 +721,93 @@ CudaRenderer::render() {
 	int imgWidth = image->width;
 	int imgHeight = image->height;
 	
+	if(numCircles<10){ //For rgb scene
+		int totalPixel = imgWidth*imgHeight;
+		int blocks = (totalPixel + 255)/256;
+		float invWidth = 1.f / imgWidth;
+		float invHeight = 1.f / imgHeight;
+		renderLittleCircle<<<blocks, 256>>>(imgWidth, invWidth, invHeight, numCircles);
+		return;
+	}
+	
 	int bundlesWidth = (imgWidth + BUNDLESIZE - 1) / BUNDLESIZE;
 	int bundlesHeight = (imgHeight + BUNDLESIZE - 1) / BUNDLESIZE;
 	
 	int bundlesTotal = bundlesWidth * bundlesHeight * numCircles;
 	
 	RenderData* bundles;
-	cudaError_t errchk = cudaMalloc((void **)&bundles, sizeof(RenderData) * bundlesTotal);
-	if(errchk != cudaSuccess){
-		printf("Render, cudaMalloc bundles no enough memory!\n");
-		return;
+	cudaMalloc((void **)&bundles, sizeof(RenderData) * bundlesTotal);
+	
+	int* valids;
+	cudaMalloc((void **)&valids, sizeof(int) * bundlesTotal);
+
+	int* hostValids = (int*)calloc(sizeof(int), bundlesTotal);
+	cudaMemcpy(valids, hostValids, bundlesTotal * sizeof(int), cudaMemcpyHostToDevice); //init valids to zero
+	
+	int* valids_copy;
+	cudaMalloc((void **)&valids_copy, sizeof(int) * bundlesTotal);
+	
+    kernelRenderCircles<<<gridDim, blockDim>>>(bundles, valids, bundlesWidth, numCircles);
+    cudaThreadSynchronize();
+
+	cudaMemcpy(valids_copy, valids, bundlesTotal * sizeof(int), cudaMemcpyDeviceToDevice);
+	
+	int gridDimX = bundlesWidth*bundlesHeight; //fixed
+	int gridDimY = (numCircles + PREFIXBLOCKSIZE - 1) / PREFIXBLOCKSIZE;
+	dim3 scanBlockGridDim(gridDimX, gridDimY, 1);
+
+	scan_block<<<scanBlockGridDim, PREFIXBLOCKSIZE>>>(valids, numCircles); //correct
+	cudaThreadSynchronize();
+	
+	if(gridDimY > 1){
+		int* device_val;
+		cudaMalloc((void **)&device_val, sizeof(int) * gridDimY * gridDimX);
+		
+		int threads = gridDimY;
+		int combineValGridY = gridDimY;
+		gridDimY = 1;
+		int scaned_width = PREFIXBLOCKSIZE;
+		int roundblock;
+		
+		while(threads > PREFIXBLOCKSIZE){
+			gridDimY = (threads + PREFIXBLOCKSIZE - 1) / PREFIXBLOCKSIZE;
+			threads = PREFIXBLOCKSIZE;
+			
+			dim3 scanCombineGridDim(gridDimX, gridDimY, 1);
+			scan_combine<<<scanCombineGridDim, threads>>>(valids, scaned_width, threads, numCircles, combineValGridY, device_val);
+			cudaThreadSynchronize();
+			
+			roundblock = (numCircles - scaned_width + PREFIXBLOCKSIZE - 1) / PREFIXBLOCKSIZE;
+			
+			dim3 threadAddGridDim(gridDimX, roundblock, 1);
+			thread_add<<<threadAddGridDim, PREFIXBLOCKSIZE>>>(valids, scaned_width, numCircles, combineValGridY, device_val, scaned_width*PREFIXBLOCKSIZE, bundlesTotal);
+			cudaThreadSynchronize();
+			
+			threads = gridDimY;
+			gridDimY = 1;
+			scaned_width *= PREFIXBLOCKSIZE;
+		}
+		
+		dim3 scanCombineOuterGridDim(gridDimX, gridDimY, 1);
+		scan_combine<<<scanCombineOuterGridDim, threads>>>(valids, scaned_width, threads, numCircles, combineValGridY, device_val);
+		cudaThreadSynchronize();
+		
+		roundblock = (numCircles - scaned_width + PREFIXBLOCKSIZE - 1) / PREFIXBLOCKSIZE;
+			
+		dim3 threadAddOuterGridDim(gridDimX, roundblock, 1);
+		thread_add<<<threadAddOuterGridDim, PREFIXBLOCKSIZE>>>(valids, scaned_width, numCircles, combineValGridY, device_val, scaned_width*PREFIXBLOCKSIZE, bundlesTotal);
+		cudaThreadSynchronize();
 	}
 	
-	int bundlesBlocks = (bundlesWidth * bundlesHeight + blockDim.x - 1) / blockDim.x;
-	initBundles<<<bundlesBlocks, blockDim.x>>>(bundles, blockDim.x, numCircles, bundlesTotal);
+	dim3 moveBundleGridDim(gridDimX, (numCircles + PREFIXBLOCKSIZE - 1) / PREFIXBLOCKSIZE, 1);
+	move_bundle<<<moveBundleGridDim, PREFIXBLOCKSIZE>>>(valids, valids_copy, bundles, numCircles);
 	cudaThreadSynchronize();
-	
-    kernelRenderCircles<<<gridDim, blockDim>>>(bundles, bundlesWidth, numCircles);
-    cudaThreadSynchronize();
-	
+
 	int totalPixels = imgWidth*imgHeight;
 	int pixelBlocks = (totalPixels + blockDim.x - 1) / blockDim.x;
-	
-	renderPixels<<<pixelBlocks, blockDim.x>>>(blockDim.x, imgWidth, imgHeight, totalPixels, bundlesWidth, numCircles, bundles);
+
+	renderPixels<<<pixelBlocks, blockDim.x>>>(blockDim.x, imgWidth, imgHeight, totalPixels, bundlesWidth, numCircles, bundles, valids_copy);
 	cudaThreadSynchronize();
 	
-	cudaFree(bundles);
+	//cudaFree(bundles);
 }
