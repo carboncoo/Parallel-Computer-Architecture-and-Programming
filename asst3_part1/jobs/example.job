@@ -1,0 +1,31 @@
+#!/bin/bash
+#ncpus must be a multiple of 16
+#PBS -l ncpus=ROUNDCORES
+#PBS -l pmem=8gb
+#PBS -l walltime=10:00              
+
+# Merge stdout and stderr into one output file
+#PBS -j oe
+
+#PBS -q batch
+
+# use the name prog1.job
+#PBS -N prog1.job
+
+# Load mpi.
+source /usr/share/modules/init/bash
+module load openmpi/1.6/gnu
+
+# Move to my $SCRATCH directory.
+cd $SCRATCH
+
+# Set this to the important directory.
+execdir=PROGDIR
+exe=parallelSort
+args="-s 10000000 -d exp -p 5"
+
+# Copy executable to $SCRATCH.
+cp $execdir/$exe $exe
+
+# Run my executable
+mpirun -np NCORES ./$exe $args
