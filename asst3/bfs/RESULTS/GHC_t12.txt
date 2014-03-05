@@ -1,0 +1,13 @@
+----------------------------------------------------------
+OMP Max system threads = 12
+OMP will use at most 12 threads.
+----------------------------------------------------------
+Loading graph (this can take some time for the bigger graphs)...
+Graph stats:
+  Edges: 499999944
+  Nodes: 50000000
+Top down BFS time: 18.362 sec
+Top down OMP BFS time: 4.822 sec
+Bottom up BFS time: 19.850 sec
+Hybrid BFS time: 2.434 sec
+Bottom-up and top-down distance results agree.

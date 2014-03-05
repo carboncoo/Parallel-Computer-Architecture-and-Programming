@@ -1,0 +1,14 @@
+cp: cannot create regular file `bfs': Text file busy
+----------------------------------------------------------
+OMP Max system threads = 4
+OMP will use at most 4 threads.
+----------------------------------------------------------
+Loading graph (this can take some time for the bigger graphs)...
+Graph stats:
+  Edges: 499999944
+  Nodes: 50000000
+Top down BFS time: 37.728 sec
+Top down OMP BFS time: 16.719 sec
+Bottom up BFS time: 27.382 sec
+Hybrid BFS time: 3.948 sec
+Bottom-up and top-down distance results agree.
