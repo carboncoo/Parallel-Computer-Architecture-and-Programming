@@ -15,7 +15,9 @@ struct vertex_set {
 };
 
 
-void bfs_bottom_up(graph* graph, solution* sol);
+void bfs_bottom_up_omp(graph* graph, solution* sol);
 void bfs_top_down(graph* graph, solution* sol);
+void bfs_top_down_omp(graph* graph, solution* sol);
+void bfs_hybrid(graph* graph, solution* sol);
 
 #endif

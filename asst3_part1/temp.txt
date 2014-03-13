@@ -1,0 +1,50 @@
+/usr/lib64/openmpi/bin/mpirun -np 4 parallelSort -s 16 -d norm -p 5
+data[0] is 0.000078 processor 1
+data[1] is 1.315378 processor 1
+data[2] is 2.556053 processor 1
+data[3] is 4.586502 processor 1
+data[0] is 0.000157 processor 3
+data[1] is 2.630756 processor 3
+data[2] is 0.112106 processor 3
+data[3] is 4.173003 processor 3
+data[0] is 0.000117 processor 2
+data[1] is 1.973067 processor 2
+data[2] is 1.334080 processor 2
+data[3] is 1.879752 processor 2
+data[0] is 0.000039 processor 0
+data[1] is 0.657689 processor 0
+data[2] is 3.778027 processor 0
+data[3] is 2.293251 processor 0
+countbuck process 0 1
+countbuck process 0 0
+countbuck process 0 0
+countbuck process 0 0
+localDISP processor 0 value 0 index 0
+localDISP processor 0 value 1 index 1
+localDISP processor 0 value 1 index 2
+localDISP processor 0 value 1 index 3
+@@@ Wrong Result! Bucket 1 (0.000000~0.000000) and 2 (0.000000~0.000000) overlap!
+countbuck process 3 3
+countbuck process 3 3
+countbuck process 3 3
+countbuck process 3 4
+localDISP processor 3 value 0 index 0
+localDISP processor 3 value 3 index 1
+localDISP processor 3 value 6 index 2
+localDISP processor 3 value 9 index 3
+countbuck process 1 0
+countbuck process 1 1
+countbuck process 1 0
+countbuck process 1 0
+localDISP processor 1 value 0 index 0
+localDISP processor 1 value 0 index 1
+localDISP processor 1 value 1 index 2
+localDISP processor 1 value 1 index 3
+countbuck process 2 0
+countbuck process 2 0
+countbuck process 2 1
+countbuck process 2 0
+localDISP processor 2 value 0 index 0
+localDISP processor 2 value 0 index 1
+localDISP processor 2 value 0 index 2
+localDISP processor 2 value 1 index 3

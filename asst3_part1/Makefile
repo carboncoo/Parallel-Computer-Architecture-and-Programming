@@ -37,7 +37,7 @@ LDFLAGS+=-lpthread -lmpi -lmpi_cxx
 all : parallelSort
 
 run : parallelSort
-	$(MPIRUN) -np 4 parallelSort -s 10000000 -d norm -p 5
+	$(MPIRUN) -np 128 parallelSort -s 100000000 -d norm -p 5
 
 parallelSort: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define SEED 0
+#define SEED 1
 
 #define GET_DATA(data, size, dist, gen) \
   for (size_t i=0; i<size; i++) data[i] = distribution(generator);
