@@ -1,0 +1,5 @@
+Log file created at: 2014/03/30 23:09:59
+Running on machine: ghc37.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 23:09:59.480644 30337 main.cpp:44] Booting worker!
+I0330 23:10:02.483660 30337 main.cpp:57] Connected to master ghc37.ghc.andrew.cmu.edu:15418

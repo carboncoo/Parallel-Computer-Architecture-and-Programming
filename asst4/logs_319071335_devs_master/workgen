@@ -1,0 +1,105 @@
+Waiting for server to initialize...
+Server ready, beginning trace...
+Request 0: req: "cmd=compareprimes;n1=803182;n2=837769;n3=603566;n4=668229", resp: "There are more primes in second range.", latency: 5331 ms
+Request 1: req: "cmd=compareprimes;n1=661974;n2=704510;n3=621325;n4=813520", resp: "There are more primes in second range.", latency: 5042 ms
+Request 2: req: "cmd=compareprimes;n1=624059;n2=791933;n3=773594;n4=859536", resp: "There are more primes in first range.", latency: 5492 ms
+Request 3: req: "cmd=compareprimes;n1=604197;n2=822011;n3=505616;n4=719480", resp: "There are more primes in first range.", latency: 4753 ms
+Request 5: req: "cmd=compareprimes;n1=500457;n2=697431;n3=597564;n4=847041", resp: "There are more primes in second range.", latency: 4721 ms
+Request 4: req: "cmd=compareprimes;n1=659529;n2=787882;n3=767261;n4=829938", resp: "There are more primes in first range.", latency: 5745 ms
+Request 6: req: "cmd=compareprimes;n1=630082;n2=848189;n3=576427;n4=727004", resp: "There are more primes in first range.", latency: 5005 ms
+Request 7: req: "cmd=compareprimes;n1=595446;n2=887017;n3=679188;n4=821272", resp: "There are more primes in first range.", latency: 5445 ms
+Request 8: req: "cmd=compareprimes;n1=532178;n2=628022;n3=703176;n4=873134", resp: "There are more primes in second range.", latency: 4932 ms
+Request 9: req: "cmd=compareprimes;n1=543623;n2=720507;n3=718976;n4=782625", resp: "There are more primes in first range.", latency: 4905 ms
+Request 10: req: "cmd=compareprimes;n1=716113;n2=825787;n3=741274;n4=885536", resp: "There are more primes in second range.", latency: 6016 ms
+Request 11: req: "cmd=compareprimes;n1=677996;n2=735047;n3=653960;n4=738515", resp: "There are more primes in second range.", latency: 5056 ms
+Request 12: req: "cmd=compareprimes;n1=616132;n2=730260;n3=574691;n4=575756", resp: "There are more primes in first range.", latency: 4375 ms
+Request 13: req: "cmd=compareprimes;n1=745109;n2=762664;n3=535929;n4=690612", resp: "There are more primes in second range.", latency: 4873 ms
+Request 16: req: "cmd=compareprimes;n1=610253;n2=782114;n3=824652;n4=839795", resp: "There are more primes in first range.", latency: 4316 ms
+Request 14: req: "cmd=compareprimes;n1=803042;n2=850709;n3=836984;n4=869353", resp: "There are more primes in first range.", latency: 6451 ms
+Request 15: req: "cmd=compareprimes;n1=859270;n2=869233;n3=656518;n4=716240", resp: "There are more primes in second range.", latency: 5808 ms
+Request 17: req: "cmd=compareprimes;n1=735921;n2=858016;n3=731878;n4=879906", resp: "There are more primes in second range.", latency: 6187 ms
+Request 19: req: "cmd=compareprimes;n1=532949;n2=817330;n3=694578;n4=745113", resp: "There are more primes in first range.", latency: 5045 ms
+Request 18: req: "cmd=compareprimes;n1=680225;n2=764098;n3=866777;n4=898504", resp: "There are more primes in first range.", latency: 6147 ms
+Request 20: req: "cmd=compareprimes;n1=752059;n2=838031;n3=597214;n4=792596", resp: "There are more primes in second range.", latency: 5504 ms
+Request 21: req: "cmd=compareprimes;n1=546853;n2=588184;n3=633014;n4=817833", resp: "There are more primes in second range.", latency: 4517 ms
+Request 22: req: "cmd=compareprimes;n1=540243;n2=826366;n3=558543;n4=779068", resp: "There are more primes in first range.", latency: 4795 ms
+Request 23: req: "cmd=compareprimes;n1=518093;n2=729546;n3=713679;n4=864007", resp: "There are more primes in first range.", latency: 3885 ms
+Request 24: req: "cmd=compareprimes;n1=510678;n2=772236;n3=742535;n4=754000", resp: "There are more primes in first range.", latency: 5017 ms
+Request 26: req: "cmd=compareprimes;n1=508654;n2=514556;n3=573988;n4=884413", resp: "There are more primes in second range.", latency: 4301 ms
+Request 25: req: "cmd=compareprimes;n1=656484;n2=730381;n3=648056;n4=892207", resp: "There are more primes in second range.", latency: 5390 ms
+Request 28: req: "cmd=compareprimes;n1=509113;n2=670247;n3=540600;n4=603968", resp: "There are more primes in first range.", latency: 3835 ms
+Request 27: req: "cmd=compareprimes;n1=549558;n2=584230;n3=820299;n4=874788", resp: "There are more primes in second range.", latency: 5107 ms
+Request 29: req: "cmd=compareprimes;n1=588331;n2=758770;n3=572127;n4=640117", resp: "There are more primes in first range.", latency: 4377 ms
+Request 30: req: "cmd=compareprimes;n1=515751;n2=701455;n3=540368;n4=895295", resp: "There are more primes in second range.", latency: 4720 ms
+Request 31: req: "cmd=compareprimes;n1=579742;n2=643422;n3=792640;n4=835331", resp: "There are more primes in first range.", latency: 5148 ms
+Request 32: req: "cmd=compareprimes;n1=567770;n2=867393;n3=769056;n4=886620", resp: "There are more primes in first range.", latency: 5812 ms
+Request 33: req: "cmd=compareprimes;n1=523220;n2=770481;n3=636925;n4=838170", resp: "There are more primes in first range.", latency: 5029 ms
+Request 34: req: "cmd=compareprimes;n1=600275;n2=738717;n3=569927;n4=676926", resp: "There are more primes in first range.", latency: 4310 ms
+Request 35: req: "cmd=lastrequest", resp: "ack", latency: 5433 ms
+WORKGEN STATS: received 4 150.87
+
+--- Results Summary ---
+
+[0] Request: cmd=compareprimes;n1=803182;n2=837769;n3=603566;n4=668229, success: YES, latency: 5331
+[1] Request: cmd=compareprimes;n1=661974;n2=704510;n3=621325;n4=813520, success: YES, latency: 5042
+[2] Request: cmd=compareprimes;n1=624059;n2=791933;n3=773594;n4=859536, success: YES, latency: 5492
+[3] Request: cmd=compareprimes;n1=604197;n2=822011;n3=505616;n4=719480, success: YES, latency: 4753
+[4] Request: cmd=compareprimes;n1=659529;n2=787882;n3=767261;n4=829938, success: YES, latency: 5745
+[5] Request: cmd=compareprimes;n1=500457;n2=697431;n3=597564;n4=847041, success: YES, latency: 4721
+[6] Request: cmd=compareprimes;n1=630082;n2=848189;n3=576427;n4=727004, success: YES, latency: 5005
+[7] Request: cmd=compareprimes;n1=595446;n2=887017;n3=679188;n4=821272, success: YES, latency: 5445
+[8] Request: cmd=compareprimes;n1=532178;n2=628022;n3=703176;n4=873134, success: YES, latency: 4932
+[9] Request: cmd=compareprimes;n1=543623;n2=720507;n3=718976;n4=782625, success: YES, latency: 4905
+[10] Request: cmd=compareprimes;n1=716113;n2=825787;n3=741274;n4=885536, success: YES, latency: 6016
+[11] Request: cmd=compareprimes;n1=677996;n2=735047;n3=653960;n4=738515, success: YES, latency: 5056
+[12] Request: cmd=compareprimes;n1=616132;n2=730260;n3=574691;n4=575756, success: YES, latency: 4375
+[13] Request: cmd=compareprimes;n1=745109;n2=762664;n3=535929;n4=690612, success: YES, latency: 4873
+[14] Request: cmd=compareprimes;n1=803042;n2=850709;n3=836984;n4=869353, success: YES, latency: 6451
+[15] Request: cmd=compareprimes;n1=859270;n2=869233;n3=656518;n4=716240, success: YES, latency: 5808
+[16] Request: cmd=compareprimes;n1=610253;n2=782114;n3=824652;n4=839795, success: YES, latency: 4316
+[17] Request: cmd=compareprimes;n1=735921;n2=858016;n3=731878;n4=879906, success: YES, latency: 6187
+[18] Request: cmd=compareprimes;n1=680225;n2=764098;n3=866777;n4=898504, success: YES, latency: 6147
+[19] Request: cmd=compareprimes;n1=532949;n2=817330;n3=694578;n4=745113, success: YES, latency: 5045
+[20] Request: cmd=compareprimes;n1=752059;n2=838031;n3=597214;n4=792596, success: YES, latency: 5504
+[21] Request: cmd=compareprimes;n1=546853;n2=588184;n3=633014;n4=817833, success: YES, latency: 4517
+[22] Request: cmd=compareprimes;n1=540243;n2=826366;n3=558543;n4=779068, success: YES, latency: 4795
+[23] Request: cmd=compareprimes;n1=518093;n2=729546;n3=713679;n4=864007, success: YES, latency: 3885
+[24] Request: cmd=compareprimes;n1=510678;n2=772236;n3=742535;n4=754000, success: YES, latency: 5017
+[25] Request: cmd=compareprimes;n1=656484;n2=730381;n3=648056;n4=892207, success: YES, latency: 5390
+[26] Request: cmd=compareprimes;n1=508654;n2=514556;n3=573988;n4=884413, success: YES, latency: 4301
+[27] Request: cmd=compareprimes;n1=549558;n2=584230;n3=820299;n4=874788, success: YES, latency: 5107
+[28] Request: cmd=compareprimes;n1=509113;n2=670247;n3=540600;n4=603968, success: YES, latency: 3835
+[29] Request: cmd=compareprimes;n1=588331;n2=758770;n3=572127;n4=640117, success: YES, latency: 4377
+[30] Request: cmd=compareprimes;n1=515751;n2=701455;n3=540368;n4=895295, success: YES, latency: 4720
+[31] Request: cmd=compareprimes;n1=579742;n2=643422;n3=792640;n4=835331, success: YES, latency: 5148
+[32] Request: cmd=compareprimes;n1=567770;n2=867393;n3=769056;n4=886620, success: YES, latency: 5812
+[33] Request: cmd=compareprimes;n1=523220;n2=770481;n3=636925;n4=838170, success: YES, latency: 5029
+[34] Request: cmd=compareprimes;n1=600275;n2=738717;n3=569927;n4=676926, success: YES, latency: 4310
+
+*** The results are correct! ***
+
+Avg request latency:  5068.78 ms
+Total test time:      44.93 sec
+Workers booted:       4
+Compute used:         150.87 sec
+
+----------------------------------------------------------------
+Grade: 0 of 13 points
+         + 3 points for correctness
+         + 0 points for perf
+         - 3 points for worker usage
+
+         0.0% requests met the 2000 ms latency requirement
+----------------------------------------------------------------
+
+Grading Details:
+  Perf:  * Summary: you get full perf points if 90% of your responses have
+           latency under 2000 ms
+         * You get one credit per response under 2000 ms. Partial credit is assigned
+           with linear falloff to no credit at 3000 ms latency.
+         * Perf points are: 10 * (num_credits / total_requests) / 0.9
+
+  Usage: * No resource penalty up to 125 CPU-seconds.
+         * Linear falloff to minus 50% points at 165 sec
+
+

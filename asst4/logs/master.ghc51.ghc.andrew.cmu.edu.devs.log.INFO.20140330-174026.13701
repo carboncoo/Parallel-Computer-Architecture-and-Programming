@@ -1,0 +1,13 @@
+Log file created at: 2014/03/30 17:40:26
+Running on machine: ghc51.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 17:40:26.391430 13701 main_loop.cpp:75] Requesting worker name=my worker 0;tag=1804289383
+I0330 17:40:29.395079 13701 main_loop.cpp:75] Requesting worker name=new guy;tag=846930886
+I0330 17:40:35.435050 13701 main_loop.cpp:75] Requesting worker name=new guy;tag=1681692777
+I0330 17:40:41.396606 13701 main_loop.cpp:75] Requesting worker name=new guy;tag=1714636915
+I0330 17:41:05.394883 13701 main_loop.cpp:75] Requesting worker name=new guy;tag=1957747793
+I0330 17:41:08.394471 13701 main_loop.cpp:75] Requesting worker name=new guy;tag=424238335
+I0330 17:41:26.395226 13701 main_loop.cpp:75] Requesting worker name=new guy;tag=719885386
+I0330 17:41:29.402657 13701 main_loop.cpp:75] Requesting worker name=new guy;tag=1649760492
+I0330 17:41:32.395125 13701 main_loop.cpp:75] Requesting worker name=new guy;tag=596516649
+F0330 17:41:35.397650 13701 main_loop.cpp:131] Check failed: send_resp(((int)event_get_fd(event)), comm_resp, 0) == 0 (-1 vs. 0) Unexpected connection failure with client 17

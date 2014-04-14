@@ -1,0 +1,5 @@
+Log file created at: 2014/03/30 22:08:45
+Running on machine: ip-10-37-21-186
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 22:08:45.961983 28810 main.cpp:44] Booting worker!
+I0330 22:08:51.524090 28810 main.cpp:57] Connected to master ip-10-76-38-110:15418

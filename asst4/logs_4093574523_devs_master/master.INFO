@@ -1,0 +1,22 @@
+Log file created at: 2014/03/30 21:07:35
+Running on machine: ip-10-76-38-110
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 21:07:35.988787 11138 main_loop.cpp:73] Requesting worker name=my worker 0;tag=1804289383
+I0330 21:07:36.990242 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=846930886
+I0330 21:07:37.990537 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1681692777
+I0330 21:07:38.990331 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1714636915
+I0330 21:07:39.990695 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1957747793
+I0330 21:07:40.990463 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=424238335
+I0330 21:07:41.990270 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=719885386
+I0330 21:07:58.030951 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1649760492
+I0330 21:07:58.989876 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=596516649
+I0330 21:08:00.029651 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1189641421
+I0330 21:08:01.026403 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1025202362
+I0330 21:08:01.990078 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1350490027
+I0330 21:08:03.030450 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=783368690
+I0330 21:08:04.030704 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1102520059
+I0330 21:08:07.990226 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=2044897763
+I0330 21:08:10.990281 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1967513926
+I0330 21:08:28.014261 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1365180540
+I0330 21:08:30.990206 11138 main_loop.cpp:73] Requesting worker name=new guy;tag=1540383426
+F0330 21:08:44.990710 11138 main_loop.cpp:129] Check failed: send_resp(((int)event_get_fd(event)), comm_resp, 0) == 0 (-1 vs. 0) Unexpected connection failure with client 10

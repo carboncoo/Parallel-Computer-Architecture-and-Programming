@@ -1,0 +1,4 @@
+Log file created at: 2014/03/30 21:43:03
+Running on machine: ip-10-196-234-64
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0330 21:43:03.473283  2765 main_loop.cpp:129] Check failed: send_resp(((int)event_get_fd(event)), comm_resp, 0) == 0 (-1 vs. 0) Unexpected connection failure with client 64

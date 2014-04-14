@@ -1,0 +1,4 @@
+Log file created at: 2014/03/30 22:20:02
+Running on machine: ghc51.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0330 22:20:02.850102  4158 main_loop.cpp:50] Check failed: workers.find(connection_handle) == workers.end() Unexpected close of worker handle 10

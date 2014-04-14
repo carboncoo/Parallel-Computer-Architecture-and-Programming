@@ -1,0 +1,8 @@
+Log file created at: 2014/03/30 22:08:49
+Running on machine: ip-10-76-38-110
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 22:08:49.007594 24161 main_loop.cpp:73] Requesting worker name=my worker 0;tag=1804289383
+I0330 22:08:52.009852 24161 main_loop.cpp:73] Requesting worker name=new guy;tag=846930886
+I0330 22:08:58.010623 24161 main_loop.cpp:73] Requesting worker name=new guy;tag=1681692777
+I0330 22:09:07.010344 24161 main_loop.cpp:73] Requesting worker name=new guy;tag=1714636915
+I0330 22:09:40.026422 24161 main_loop.cpp:138] Shutting down

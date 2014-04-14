@@ -1,0 +1,12 @@
+Log file created at: 2014/03/30 21:42:28
+Running on machine: ip-10-196-234-64
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 21:42:28.466256  2765 main_loop.cpp:73] Requesting worker name=my worker 0;tag=1804289383
+I0330 21:42:29.468194  2765 main_loop.cpp:73] Requesting worker name=new guy;tag=846930886
+I0330 21:42:30.467730  2765 main_loop.cpp:73] Requesting worker name=new guy;tag=1681692777
+I0330 21:42:31.467445  2765 main_loop.cpp:73] Requesting worker name=new guy;tag=1714636915
+I0330 21:42:32.467838  2765 main_loop.cpp:73] Requesting worker name=new guy;tag=1957747793
+I0330 21:42:33.467494  2765 main_loop.cpp:73] Requesting worker name=new guy;tag=424238335
+I0330 21:42:36.466884  2765 main_loop.cpp:73] Requesting worker name=new guy;tag=719885386
+I0330 21:43:03.467967  2765 main_loop.cpp:73] Requesting worker name=new guy;tag=1649760492
+F0330 21:43:03.473283  2765 main_loop.cpp:129] Check failed: send_resp(((int)event_get_fd(event)), comm_resp, 0) == 0 (-1 vs. 0) Unexpected connection failure with client 64

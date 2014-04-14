@@ -1,0 +1,4 @@
+Log file created at: 2014/03/30 17:41:35
+Running on machine: ghc51.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0330 17:41:35.397650 13701 main_loop.cpp:131] Check failed: send_resp(((int)event_get_fd(event)), comm_resp, 0) == 0 (-1 vs. 0) Unexpected connection failure with client 17

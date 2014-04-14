@@ -1,0 +1,4 @@
+Log file created at: 2014/03/30 22:29:14
+Running on machine: ghc51.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0330 22:29:14.503029  5518 main.cpp:56] Check failed: master_fd >= 0 (-1 vs. 0) Worker could not connect to masterghc51.ghc.andrew.cmu.edu:15418

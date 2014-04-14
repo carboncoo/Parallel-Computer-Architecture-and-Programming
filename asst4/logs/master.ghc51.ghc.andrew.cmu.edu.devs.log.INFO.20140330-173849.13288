@@ -1,0 +1,11 @@
+Log file created at: 2014/03/30 17:38:49
+Running on machine: ghc51.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 17:38:49.178423 13288 main_loop.cpp:75] Requesting worker name=my worker 0;tag=1804289383
+I0330 17:38:51.182368 13288 main_loop.cpp:75] Requesting worker name=new guy;tag=846930886
+I0330 17:38:57.221647 13288 main_loop.cpp:75] Requesting worker name=new guy;tag=1681692777
+I0330 17:38:59.222013 13288 main_loop.cpp:75] Requesting worker name=new guy;tag=1714636915
+I0330 17:39:13.181535 13288 main_loop.cpp:75] Requesting worker name=new guy;tag=1957747793
+I0330 17:39:19.181388 13288 main_loop.cpp:75] Requesting worker name=new guy;tag=424238335
+I0330 17:39:43.222013 13288 main_loop.cpp:75] Requesting worker name=new guy;tag=719885386
+I0330 17:39:55.192144 13288 main_loop.cpp:140] Shutting down

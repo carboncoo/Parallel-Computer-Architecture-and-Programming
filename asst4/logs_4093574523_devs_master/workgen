@@ -1,0 +1,195 @@
+Waiting for server to initialize...
+Server ready, beginning trace...
+Request 0: req: "cmd=countprimes;n=953327", resp: "75151", latency: 1863 ms
+Request 1: req: "cmd=countprimes;n=927387", resp: "73285", latency: 1808 ms
+Request 2: req: "cmd=countprimes;n=826171", resp: "65890", latency: 1527 ms
+Request 3: req: "cmd=countprimes;n=777675", resp: "62294", latency: 1408 ms
+Request 4: req: "cmd=countprimes;n=853382", resp: "67860", latency: 1630 ms
+Request 5: req: "cmd=countprimes;n=821480", resp: "65528", latency: 1513 ms
+Request 6: req: "cmd=countprimes;n=935140", resp: "73846", latency: 1821 ms
+Request 7: req: "cmd=countprimes;n=790994", resp: "63283", latency: 1482 ms
+Request 8: req: "cmd=countprimes;n=842979", resp: "67109", latency: 1642 ms
+Request 9: req: "cmd=countprimes;n=875015", resp: "69449", latency: 1647 ms
+Request 10: req: "cmd=countprimes;n=348394", resp: "29846", latency: 498 ms
+Request 11: req: "cmd=countprimes;n=679060", resp: "54984", latency: 1374 ms
+Request 13: req: "cmd=countprimes;n=234567", resp: "20794", latency: 1628 ms
+Request 14: req: "cmd=countprimes;n=480123", resp: "40019", latency: 2399 ms
+Request 12: req: "cmd=countprimes;n=1000010", resp: "78499", latency: 2605 ms
+Request 16: req: "cmd=countprimes;n=230237", resp: "20458", latency: 2846 ms
+Request 17: req: "cmd=countprimes;n=450923", resp: "37792", latency: 3540 ms
+Request 18: req: "cmd=countprimes;n=129000", resp: "12076", latency: 3675 ms
+Request 15: req: "cmd=countprimes;n=990600", resp: "77823", latency: 4586 ms
+Request 19: req: "cmd=countprimes;n=609902", resp: "49852", latency: 4790 ms
+Request 21: req: "cmd=countprimes;n=851406", resp: "67723", latency: 4957 ms
+Request 20: req: "cmd=countprimes;n=972434", resp: "76542", latency: 6501 ms
+Request 22: req: "cmd=countprimes;n=784551", resp: "62810", latency: 4972 ms
+Request 23: req: "cmd=countprimes;n=926742", resp: "73243", latency: 3988 ms
+Request 25: req: "cmd=countprimes;n=775152", resp: "62114", latency: 1397 ms
+Request 24: req: "cmd=countprimes;n=885511", resp: "70225", latency: 3698 ms
+Request 26: req: "cmd=countprimes;n=972924", resp: "76573", latency: 1947 ms
+Request 27: req: "cmd=countprimes;n=994836", resp: "78124", latency: 2018 ms
+Request 28: req: "cmd=countprimes;n=943065", resp: "74418", latency: 1873 ms
+Request 30: req: "cmd=countprimes;n=348394", resp: "29846", latency: 0 ms
+Request 32: req: "cmd=countprimes;n=1000010", resp: "78499", latency: 12 ms
+Request 31: req: "cmd=countprimes;n=679060", resp: "54984", latency: 77 ms
+Request 34: req: "cmd=countprimes;n=480123", resp: "40019", latency: 14 ms
+Request 33: req: "cmd=countprimes;n=234567", resp: "20794", latency: 79 ms
+Request 36: req: "cmd=countprimes;n=230237", resp: "20458", latency: 40 ms
+Request 35: req: "cmd=countprimes;n=990600", resp: "77823", latency: 77 ms
+Request 37: req: "cmd=countprimes;n=450923", resp: "37792", latency: 79 ms
+Request 38: req: "cmd=countprimes;n=129000", resp: "12076", latency: 78 ms
+Request 39: req: "cmd=countprimes;n=609902", resp: "49852", latency: 77 ms
+Request 29: req: "cmd=countprimes;n=970650", resp: "76395", latency: 1940 ms
+Request 40: req: "cmd=countprimes;n=793044", resp: "63438", latency: 1471 ms
+Request 41: req: "cmd=countprimes;n=918950", resp: "72660", latency: 1842 ms
+Request 42: req: "cmd=countprimes;n=969652", resp: "76323", latency: 1932 ms
+Request 43: req: "cmd=countprimes;n=905195", resp: "71650", latency: 1736 ms
+Request 44: req: "cmd=countprimes;n=841643", resp: "67007", latency: 1571 ms
+Request 45: req: "cmd=countprimes;n=730210", resp: "58800", latency: 1281 ms
+Request 46: req: "cmd=countprimes;n=830251", resp: "66176", latency: 1530 ms
+Request 47: req: "cmd=countprimes;n=883266", resp: "70065", latency: 1678 ms
+Request 48: req: "cmd=countprimes;n=973904", resp: "76639", latency: 1968 ms
+Request 50: req: "cmd=countprimes;n=348394", resp: "29846", latency: 0 ms
+Request 52: req: "cmd=countprimes;n=1000010", resp: "78499", latency: 38 ms
+Request 51: req: "cmd=countprimes;n=679060", resp: "54984", latency: 79 ms
+Request 53: req: "cmd=countprimes;n=234567", resp: "20794", latency: 37 ms
+Request 54: req: "cmd=countprimes;n=480123", resp: "40019", latency: 80 ms
+Request 56: req: "cmd=countprimes;n=230237", resp: "20458", latency: 38 ms
+Request 55: req: "cmd=countprimes;n=990600", resp: "77823", latency: 79 ms
+Request 57: req: "cmd=countprimes;n=450923", resp: "37792", latency: 37 ms
+Request 58: req: "cmd=countprimes;n=129000", resp: "12076", latency: 80 ms
+Request 59: req: "cmd=countprimes;n=609902", resp: "49852", latency: 79 ms
+Request 49: req: "cmd=countprimes;n=989982", resp: "77776", latency: 1970 ms
+Request 60: req: "cmd=countprimes;n=843103", resp: "67116", latency: 1600 ms
+Request 61: req: "cmd=countprimes;n=959593", resp: "75588", latency: 1887 ms
+Request 62: req: "cmd=countprimes;n=778147", resp: "62329", latency: 1431 ms
+Request 63: req: "cmd=countprimes;n=941509", resp: "74302", latency: 1827 ms
+Request 64: req: "cmd=countprimes;n=864610", resp: "68688", latency: 1627 ms
+Request 65: req: "cmd=countprimes;n=704212", resp: "56860", latency: 1224 ms
+Request 66: req: "cmd=countprimes;n=915912", resp: "72430", latency: 1771 ms
+Request 67: req: "cmd=countprimes;n=819647", resp: "65388", latency: 1520 ms
+Request 68: req: "cmd=countprimes;n=947454", resp: "74728", latency: 1845 ms
+Request 70: req: "cmd=countprimes;n=348394", resp: "29846", latency: 0 ms
+Request 72: req: "cmd=countprimes;n=1000010", resp: "78499", latency: 40 ms
+Request 71: req: "cmd=countprimes;n=679060", resp: "54984", latency: 76 ms
+Request 73: req: "cmd=countprimes;n=234567", resp: "20794", latency: 39 ms
+Request 74: req: "cmd=countprimes;n=480123", resp: "40019", latency: 78 ms
+Request 76: req: "cmd=countprimes;n=230237", resp: "20458", latency: 40 ms
+Request 75: req: "cmd=countprimes;n=990600", resp: "77823", latency: 77 ms
+Request 77: req: "cmd=countprimes;n=450923", resp: "37792", latency: 39 ms
+Request 69: req: "cmd=countprimes;n=900446", resp: "71305", latency: 1764 ms
+Request 78: req: "cmd=countprimes;n=129000", resp: "12076", latency: 78 ms
+Request 79: req: "cmd=countprimes;n=609902", resp: "49852", latency: 77 ms
+Request 80: req: "cmd=lastrequest", resp: "ack", latency: 492 ms
+WORKGEN STATS: received 11 70.74
+
+--- Results Summary ---
+
+[0] Request: cmd=countprimes;n=953327, success: YES, latency: 1863
+[1] Request: cmd=countprimes;n=927387, success: YES, latency: 1808
+[2] Request: cmd=countprimes;n=826171, success: YES, latency: 1527
+[3] Request: cmd=countprimes;n=777675, success: YES, latency: 1408
+[4] Request: cmd=countprimes;n=853382, success: YES, latency: 1630
+[5] Request: cmd=countprimes;n=821480, success: YES, latency: 1513
+[6] Request: cmd=countprimes;n=935140, success: YES, latency: 1821
+[7] Request: cmd=countprimes;n=790994, success: YES, latency: 1482
+[8] Request: cmd=countprimes;n=842979, success: YES, latency: 1642
+[9] Request: cmd=countprimes;n=875015, success: YES, latency: 1647
+[10] Request: cmd=countprimes;n=348394, success: YES, latency: 498
+[11] Request: cmd=countprimes;n=679060, success: YES, latency: 1374
+[12] Request: cmd=countprimes;n=1000010, success: YES, latency: 2605
+[13] Request: cmd=countprimes;n=234567, success: YES, latency: 1628
+[14] Request: cmd=countprimes;n=480123, success: YES, latency: 2399
+[15] Request: cmd=countprimes;n=990600, success: YES, latency: 4586
+[16] Request: cmd=countprimes;n=230237, success: YES, latency: 2846
+[17] Request: cmd=countprimes;n=450923, success: YES, latency: 3540
+[18] Request: cmd=countprimes;n=129000, success: YES, latency: 3675
+[19] Request: cmd=countprimes;n=609902, success: YES, latency: 4790
+[20] Request: cmd=countprimes;n=972434, success: YES, latency: 6501
+[21] Request: cmd=countprimes;n=851406, success: YES, latency: 4957
+[22] Request: cmd=countprimes;n=784551, success: YES, latency: 4972
+[23] Request: cmd=countprimes;n=926742, success: YES, latency: 3988
+[24] Request: cmd=countprimes;n=885511, success: YES, latency: 3698
+[25] Request: cmd=countprimes;n=775152, success: YES, latency: 1397
+[26] Request: cmd=countprimes;n=972924, success: YES, latency: 1947
+[27] Request: cmd=countprimes;n=994836, success: YES, latency: 2018
+[28] Request: cmd=countprimes;n=943065, success: YES, latency: 1873
+[29] Request: cmd=countprimes;n=970650, success: YES, latency: 1940
+[30] Request: cmd=countprimes;n=348394, success: YES, latency: 0
+[31] Request: cmd=countprimes;n=679060, success: YES, latency: 77
+[32] Request: cmd=countprimes;n=1000010, success: YES, latency: 12
+[33] Request: cmd=countprimes;n=234567, success: YES, latency: 79
+[34] Request: cmd=countprimes;n=480123, success: YES, latency: 14
+[35] Request: cmd=countprimes;n=990600, success: YES, latency: 77
+[36] Request: cmd=countprimes;n=230237, success: YES, latency: 40
+[37] Request: cmd=countprimes;n=450923, success: YES, latency: 79
+[38] Request: cmd=countprimes;n=129000, success: YES, latency: 78
+[39] Request: cmd=countprimes;n=609902, success: YES, latency: 77
+[40] Request: cmd=countprimes;n=793044, success: YES, latency: 1471
+[41] Request: cmd=countprimes;n=918950, success: YES, latency: 1842
+[42] Request: cmd=countprimes;n=969652, success: YES, latency: 1932
+[43] Request: cmd=countprimes;n=905195, success: YES, latency: 1736
+[44] Request: cmd=countprimes;n=841643, success: YES, latency: 1571
+[45] Request: cmd=countprimes;n=730210, success: YES, latency: 1281
+[46] Request: cmd=countprimes;n=830251, success: YES, latency: 1530
+[47] Request: cmd=countprimes;n=883266, success: YES, latency: 1678
+[48] Request: cmd=countprimes;n=973904, success: YES, latency: 1968
+[49] Request: cmd=countprimes;n=989982, success: YES, latency: 1970
+[50] Request: cmd=countprimes;n=348394, success: YES, latency: 0
+[51] Request: cmd=countprimes;n=679060, success: YES, latency: 79
+[52] Request: cmd=countprimes;n=1000010, success: YES, latency: 38
+[53] Request: cmd=countprimes;n=234567, success: YES, latency: 37
+[54] Request: cmd=countprimes;n=480123, success: YES, latency: 80
+[55] Request: cmd=countprimes;n=990600, success: YES, latency: 79
+[56] Request: cmd=countprimes;n=230237, success: YES, latency: 38
+[57] Request: cmd=countprimes;n=450923, success: YES, latency: 37
+[58] Request: cmd=countprimes;n=129000, success: YES, latency: 80
+[59] Request: cmd=countprimes;n=609902, success: YES, latency: 79
+[60] Request: cmd=countprimes;n=843103, success: YES, latency: 1600
+[61] Request: cmd=countprimes;n=959593, success: YES, latency: 1887
+[62] Request: cmd=countprimes;n=778147, success: YES, latency: 1431
+[63] Request: cmd=countprimes;n=941509, success: YES, latency: 1827
+[64] Request: cmd=countprimes;n=864610, success: YES, latency: 1627
+[65] Request: cmd=countprimes;n=704212, success: YES, latency: 1224
+[66] Request: cmd=countprimes;n=915912, success: YES, latency: 1771
+[67] Request: cmd=countprimes;n=819647, success: YES, latency: 1520
+[68] Request: cmd=countprimes;n=947454, success: YES, latency: 1845
+[69] Request: cmd=countprimes;n=900446, success: YES, latency: 1764
+[70] Request: cmd=countprimes;n=348394, success: YES, latency: 0
+[71] Request: cmd=countprimes;n=679060, success: YES, latency: 76
+[72] Request: cmd=countprimes;n=1000010, success: YES, latency: 40
+[73] Request: cmd=countprimes;n=234567, success: YES, latency: 39
+[74] Request: cmd=countprimes;n=480123, success: YES, latency: 78
+[75] Request: cmd=countprimes;n=990600, success: YES, latency: 77
+[76] Request: cmd=countprimes;n=230237, success: YES, latency: 40
+[77] Request: cmd=countprimes;n=450923, success: YES, latency: 39
+[78] Request: cmd=countprimes;n=129000, success: YES, latency: 78
+[79] Request: cmd=countprimes;n=609902, success: YES, latency: 77
+
+*** The results are correct! ***
+
+Avg request latency:  1408.77 ms
+Total test time:      61.97 sec
+Workers booted:       11
+Compute used:         70.74 sec
+
+----------------------------------------------------------------
+Grade: 11 of 13 points
+         + 3 points for correctness
+         + 8 points for perf
+         - 0 points for worker usage
+
+         63.8% requests met the 1700 ms latency requirement
+----------------------------------------------------------------
+
+Grading Details:
+  Perf:  * Summary: you get full perf points if 90% of your responses have
+           latency under 1700 ms
+         * You get one credit per response under 1700 ms. Partial credit is assigned
+           with linear falloff to no credit at 2500 ms latency.
+         * Perf points are: 10 * (num_credits / total_requests) / 0.9
+
+  Usage: * No resource penalty up to 95 CPU-seconds.
+         * Linear falloff to minus 75% points at 250 sec
+
+

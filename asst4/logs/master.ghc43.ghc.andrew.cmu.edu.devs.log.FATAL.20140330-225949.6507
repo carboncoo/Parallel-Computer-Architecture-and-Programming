@@ -1,0 +1,4 @@
+Log file created at: 2014/03/30 22:59:49
+Running on machine: ghc43.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0330 22:59:49.094630  6507 main.cpp:44] Check failed: accept_fd >= 0 (-1 vs. 0) Could not listen on ghc43.ghc.andrew.cmu.edu:15418

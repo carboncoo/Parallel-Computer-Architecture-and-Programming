@@ -1,0 +1,5 @@
+Log file created at: 2014/03/30 23:10:38
+Running on machine: ghc37.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 23:10:38.957692 30588 main.cpp:44] Booting worker!
+F0330 23:10:41.961544 30588 main.cpp:56] Check failed: master_fd >= 0 (-1 vs. 0) Worker could not connect to masterghc37.ghc.andrew.cmu.edu:15418

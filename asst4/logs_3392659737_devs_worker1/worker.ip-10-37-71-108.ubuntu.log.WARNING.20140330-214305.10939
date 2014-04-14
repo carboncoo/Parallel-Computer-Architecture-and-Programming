@@ -1,0 +1,4 @@
+Log file created at: 2014/03/30 21:43:05
+Running on machine: ip-10-37-71-108
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0330 21:43:05.169435 10939 main.cpp:56] Check failed: master_fd >= 0 (-1 vs. 0) Worker could not connect to masterip-10-196-234-64:15418

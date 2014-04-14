@@ -1,0 +1,147 @@
+Waiting for server to initialize...
+Server ready, beginning trace...
+Request 0: req: "cmd=countprimes;n=734443", resp: "59112", latency: 1304 ms
+Request 1: req: "cmd=countprimes;n=725796", resp: "58471", latency: 1344 ms
+Request 3: req: "cmd=countprimes;n=675891", resp: "54754", latency: 1165 ms
+Request 4: req: "cmd=countprimes;n=701127", resp: "56625", latency: 1287 ms
+Request 2: req: "cmd=countprimes;n=692057", resp: "55957", latency: 1992 ms
+Request 5: req: "cmd=countprimes;n=690493", resp: "55845", latency: 1345 ms
+Request 7: req: "cmd=countprimes;n=680331", resp: "55089", latency: 1221 ms
+Request 6: req: "cmd=countprimes;n=728380", resp: "58660", latency: 1557 ms
+Request 8: req: "cmd=countprimes;n=697660", resp: "56383", latency: 1244 ms
+Request 9: req: "cmd=countprimes;n=708338", resp: "57182", latency: 1243 ms
+Request 10: req: "cmd=countprimes;n=731623", resp: "58902", latency: 1326 ms
+Request 11: req: "cmd=countprimes;n=650937", resp: "52889", latency: 1106 ms
+Request 12: req: "cmd=countprimes;n=606367", resp: "49579", latency: 1004 ms
+Request 13: req: "cmd=countprimes;n=701161", resp: "56627", latency: 1233 ms
+Request 14: req: "cmd=countprimes;n=673674", resp: "54596", latency: 1162 ms
+Request 15: req: "cmd=countprimes;n=600101", resp: "49104", latency: 1033 ms
+Request 16: req: "cmd=countprimes;n=731950", resp: "58931", latency: 1323 ms
+Request 17: req: "cmd=countprimes;n=746558", resp: "59987", latency: 1359 ms
+Request 18: req: "cmd=countprimes;n=712044", resp: "57462", latency: 1276 ms
+Request 20: req: "cmd=countprimes;n=612029", resp: "50007", latency: 1076 ms
+Request 19: req: "cmd=countprimes;n=730434", resp: "58812", latency: 1365 ms
+Request 21: req: "cmd=countprimes;n=695967", resp: "56256", latency: 1218 ms
+Request 22: req: "cmd=countprimes;n=729768", resp: "58772", latency: 1279 ms
+Request 23: req: "cmd=countprimes;n=686797", resp: "55563", latency: 1166 ms
+Request 24: req: "cmd=countprimes;n=644429", resp: "52397", latency: 1067 ms
+Request 25: req: "cmd=418wisdom;x=10070", resp: "Bring out all the stops in assignment 4.", latency: 1968 ms
+Request 26: req: "cmd=418wisdom;x=43417", resp: "Come to lecture, there might be donuts!", latency: 2008 ms
+Request 30: req: "cmd=418wisdom;x=47701", resp: "You will PWN your classmates in the parallelism competition", latency: 1968 ms
+Request 29: req: "cmd=418wisdom;x=96661", resp: "You are going to do a great project", latency: 1978 ms
+Request 28: req: "cmd=418wisdom;x=91302", resp: "Flatter your TAs with compliments", latency: 1989 ms
+Request 27: req: "cmd=418wisdom;x=61089", resp: "Worse is better. Keep it simple...", latency: 1999 ms
+Request 31: req: "cmd=418wisdom;x=86531", resp: "Do a great project, and it all works out in the end", latency: 1994 ms
+Request 32: req: "cmd=418wisdom;x=26049", resp: "Do a great project, and it all works out in the end", latency: 2034 ms
+Request 33: req: "cmd=418wisdom;x=80503", resp: "OMG, 418 is so gr8!", latency: 3925 ms
+Request 37: req: "cmd=418wisdom;x=39882", resp: "Flatter your TAs with compliments", latency: 3897 ms
+Request 35: req: "cmd=418wisdom;x=1404", resp: "You will perform amazingly on exam 2", latency: 3917 ms
+Request 36: req: "cmd=418wisdom;x=71971", resp: "Come to lecture, there might be donuts!", latency: 3935 ms
+Request 38: req: "cmd=418wisdom;x=82485", resp: "Come to lecture, there might be donuts!", latency: 3915 ms
+Request 39: req: "cmd=418wisdom;x=66815", resp: "Laugh at Kayvon's jokes", latency: 3921 ms
+Request 34: req: "cmd=418wisdom;x=54870", resp: "Worse is better. Keep it simple...", latency: 3999 ms
+Request 40: req: "cmd=418wisdom;x=114", resp: "Bring out all the stops in assignment 4.", latency: 3999 ms
+Request 45: req: "cmd=mostviewed;start=2013-2-18;end=2013-2-30", resp: "lecture/cachecoherence2 -- 228 views", latency: 5593 ms
+Request 46: req: "cmd=mostviewed;start=2013-2-3;end=2013-2-17", resp: "lecture/gpuarch -- 578 views", latency: 5647 ms
+Request 43: req: "cmd=418wisdom;x=24391", resp: "Do a great project, and it all works out in the end", latency: 5857 ms
+Request 42: req: "cmd=418wisdom;x=86761", resp: "Do a great project, and it all works out in the end", latency: 5867 ms
+Request 44: req: "cmd=418wisdom;x=32520", resp: "If all else fails... buy Kayvon donuts", latency: 5850 ms
+Request 41: req: "cmd=418wisdom;x=49358", resp: "Ask questions. Ask questions. Ask questions", latency: 5897 ms
+Request 47: req: "cmd=mostviewed;start=2013-2-17;end=2013-2-25", resp: "lecture/cachecoherence1 -- 179 views", latency: 6169 ms
+Request 51: req: "cmd=mostviewed;start=2013-1-23;end=2013-1-30", resp: "lecture/progmodels -- 478 views", latency: 7533 ms
+Request 48: req: "cmd=mostviewed;start=2013-2-29;end=2013-3-19", resp: "lecture/cachecoherence1 -- 471 views", latency: 10351 ms
+Request 54: req: "cmd=mostviewed;start=2013-2-18;end=2013-3-29", resp: "lecture/cachecoherence1 -- 687 views", latency: 12260 ms
+Request 49: req: "cmd=mostviewed;start=2013-2-18;end=2013-2-25", resp: "lecture/cachecoherence1 -- 151 views", latency: 12613 ms
+Request 50: req: "cmd=mostviewed;start=2013-1-6;end=2013-1-22", resp: "lecture/basicarch -- 821 views", latency: 12803 ms
+Request 53: req: "cmd=mostviewed;start=2013-1-9;end=2013-3-25", resp: "lecture/basicarch -- 1914 views", latency: 12927 ms
+Request 55: req: "cmd=mostviewed;start=2013-2-20;end=2013-2-30", resp: "lecture/cachecoherence2 -- 228 views", latency: 13490 ms
+Request 52: req: "cmd=mostviewed;start=2013-2-28;end=2013-3-17", resp: "lecture/cachecoherence1 -- 484 views", latency: 13907 ms
+Request 57: req: "cmd=mostviewed;start=2013-2-22;end=2013-2-24", resp: "lecture/cachecoherence2 -- 54 views", latency: 15163 ms
+Request 58: req: "cmd=mostviewed;start=2013-2-25;end=2013-2-26", resp: "lecture/cachecoherence2 -- 28 views", latency: 16154 ms
+Request 56: req: "cmd=mostviewed;start=2013-2-19;end=2013-2-26", resp: "lecture/cachecoherence2 -- 171 views", latency: 16659 ms
+Request 59: req: "cmd=lastrequest", resp: "ack", latency: 16804 ms
+WORKGEN STATS: received 4 106.35
+
+--- Results Summary ---
+
+[0] Request: cmd=countprimes;n=734443, success: YES, latency: 1304
+[1] Request: cmd=countprimes;n=725796, success: YES, latency: 1344
+[2] Request: cmd=countprimes;n=692057, success: YES, latency: 1992
+[3] Request: cmd=countprimes;n=675891, success: YES, latency: 1165
+[4] Request: cmd=countprimes;n=701127, success: YES, latency: 1287
+[5] Request: cmd=countprimes;n=690493, success: YES, latency: 1345
+[6] Request: cmd=countprimes;n=728380, success: YES, latency: 1557
+[7] Request: cmd=countprimes;n=680331, success: YES, latency: 1221
+[8] Request: cmd=countprimes;n=697660, success: YES, latency: 1244
+[9] Request: cmd=countprimes;n=708338, success: YES, latency: 1243
+[10] Request: cmd=countprimes;n=731623, success: YES, latency: 1326
+[11] Request: cmd=countprimes;n=650937, success: YES, latency: 1106
+[12] Request: cmd=countprimes;n=606367, success: YES, latency: 1004
+[13] Request: cmd=countprimes;n=701161, success: YES, latency: 1233
+[14] Request: cmd=countprimes;n=673674, success: YES, latency: 1162
+[15] Request: cmd=countprimes;n=600101, success: YES, latency: 1033
+[16] Request: cmd=countprimes;n=731950, success: YES, latency: 1323
+[17] Request: cmd=countprimes;n=746558, success: YES, latency: 1359
+[18] Request: cmd=countprimes;n=712044, success: YES, latency: 1276
+[19] Request: cmd=countprimes;n=730434, success: YES, latency: 1365
+[20] Request: cmd=countprimes;n=612029, success: YES, latency: 1076
+[21] Request: cmd=countprimes;n=695967, success: YES, latency: 1218
+[22] Request: cmd=countprimes;n=729768, success: YES, latency: 1279
+[23] Request: cmd=countprimes;n=686797, success: YES, latency: 1166
+[24] Request: cmd=countprimes;n=644429, success: YES, latency: 1067
+[25] Request: cmd=418wisdom;x=10070, success: YES, latency: 1968
+[26] Request: cmd=418wisdom;x=43417, success: YES, latency: 2008
+[27] Request: cmd=418wisdom;x=61089, success: YES, latency: 1999
+[28] Request: cmd=418wisdom;x=91302, success: YES, latency: 1989
+[29] Request: cmd=418wisdom;x=96661, success: YES, latency: 1978
+[30] Request: cmd=418wisdom;x=47701, success: YES, latency: 1968
+[31] Request: cmd=418wisdom;x=86531, success: YES, latency: 1994
+[32] Request: cmd=418wisdom;x=26049, success: YES, latency: 2034
+[33] Request: cmd=418wisdom;x=80503, success: YES, latency: 3925
+[34] Request: cmd=418wisdom;x=54870, success: YES, latency: 3999
+[35] Request: cmd=418wisdom;x=1404, success: YES, latency: 3917
+[36] Request: cmd=418wisdom;x=71971, success: YES, latency: 3935
+[37] Request: cmd=418wisdom;x=39882, success: YES, latency: 3897
+[38] Request: cmd=418wisdom;x=82485, success: YES, latency: 3915
+[39] Request: cmd=418wisdom;x=66815, success: YES, latency: 3921
+[40] Request: cmd=418wisdom;x=114, success: YES, latency: 3999
+[41] Request: cmd=418wisdom;x=49358, success: YES, latency: 5897
+[42] Request: cmd=418wisdom;x=86761, success: YES, latency: 5867
+[43] Request: cmd=418wisdom;x=24391, success: YES, latency: 5857
+[44] Request: cmd=418wisdom;x=32520, success: YES, latency: 5850
+[45] Request: cmd=mostviewed;start=2013-2-18;end=2013-2-30, success: YES, latency: 5593
+[46] Request: cmd=mostviewed;start=2013-2-3;end=2013-2-17, success: YES, latency: 5647
+[47] Request: cmd=mostviewed;start=2013-2-17;end=2013-2-25, success: YES, latency: 6169
+[48] Request: cmd=mostviewed;start=2013-2-29;end=2013-3-19, success: YES, latency: 10351
+[49] Request: cmd=mostviewed;start=2013-2-18;end=2013-2-25, success: YES, latency: 12613
+[50] Request: cmd=mostviewed;start=2013-1-6;end=2013-1-22, success: YES, latency: 12803
+[51] Request: cmd=mostviewed;start=2013-1-23;end=2013-1-30, success: YES, latency: 7533
+[52] Request: cmd=mostviewed;start=2013-2-28;end=2013-3-17, success: YES, latency: 13907
+[53] Request: cmd=mostviewed;start=2013-1-9;end=2013-3-25, success: YES, latency: 12927
+[54] Request: cmd=mostviewed;start=2013-2-18;end=2013-3-29, success: YES, latency: 12260
+[55] Request: cmd=mostviewed;start=2013-2-20;end=2013-2-30, success: YES, latency: 13490
+[56] Request: cmd=mostviewed;start=2013-2-19;end=2013-2-26, success: YES, latency: 16659
+[57] Request: cmd=mostviewed;start=2013-2-22;end=2013-2-24, success: YES, latency: 15163
+[58] Request: cmd=mostviewed;start=2013-2-25;end=2013-2-26, success: YES, latency: 16154
+
+*** The results are correct! ***
+
+Avg request latency:  4473.06 ms
+Total test time:      27.94 sec
+Workers booted:       4
+Compute used:         106.35 sec
+
+----------------------------------------------------------------
+Grade: 13 of 13 points
+----------------------------------------------------------------
+
+Grading Details:
+  Goal:  * Get the burst completed as quickly as possible.  This test
+           measures server throughput
+
+  Perf:  * 10 pts for completion in under 28 sec
+         * Linear falloff to 0 pts at 60 sec
+
+  Usage: * There is no penality for usage
+
+

@@ -1,0 +1,4 @@
+Log file created at: 2014/03/30 23:09:43
+Running on machine: ghc37.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0330 23:09:43.131875 30272 main.cpp:48] Check failed: launcher_fd >= 0 (-1 vs. 0) Could not connect to launcher ghc37.ghc.andrew.cmu.edu:1477

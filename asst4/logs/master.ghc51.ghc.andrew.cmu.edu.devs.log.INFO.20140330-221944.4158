@@ -1,0 +1,9 @@
+Log file created at: 2014/03/30 22:19:44
+Running on machine: ghc51.ghc.andrew.cmu.edu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0330 22:19:44.842556  4158 main_loop.cpp:75] Requesting worker name=my worker 0;tag=1804289383
+I0330 22:19:47.846964  4158 main_loop.cpp:75] Requesting worker name=new guy;tag=846930886
+I0330 22:19:56.846624  4158 main_loop.cpp:75] Requesting worker name=new guy;tag=1681692777
+I0330 22:19:59.846796  4158 main_loop.cpp:75] Requesting worker name=new guy;tag=1714636915
+I0330 22:20:02.848979  4158 main_loop.cpp:75] Requesting worker name=new guy;tag=1957747793
+F0330 22:20:02.850102  4158 main_loop.cpp:50] Check failed: workers.find(connection_handle) == workers.end() Unexpected close of worker handle 10
