@@ -1,11 +1,13 @@
-#include </afs/cs/academic/class/15418-s13/public/include/opencv2/opencv.hpp>
-#include "/afs/cs/academic/class/15418-s13/public/include/opencv2/video/tracking.hpp"
-#include "/afs/cs/academic/class/15418-s13/public/include/opencv2/imgproc/imgproc.hpp"
-#include "/afs/cs/academic/class/15418-s13/public/include/opencv2/highgui/highgui.hpp"
-#include "/afs/cs/academic/class/15418-s13/public/include/opencv2/core/core.hpp"
+
+#include <opencv2/opencv.hpp>
+#include "opencv2/video/tracking.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/core/core.hpp"
 #include <ctype.h>
 #include <string>
 #include <fstream>
+#include "vectors.h"
 
 using namespace cv;
 using namespace std;
@@ -64,6 +66,14 @@ int main( int argc, char** argv )
 
     Mat gray, prevGray, image;
     vector<Point2f> points[2];
+    //points.insert(points.end(),
+    player_pva player;
+    //pva_vector  
+    //pva stuff(0,0);
+    player.position =  pva_vector();
+    player.velocity = pva_vector();
+    player.acceleration = pva_vector();
+    player.new_pos(0,0);
     
     for(;;)
     {
@@ -87,7 +97,10 @@ int main( int argc, char** argv )
         }
         else if( !points[0].empty() )
         {
+            player.new_pos(points[0][0].x, points[0][0].y); 
             cout << points[0][0].x << endl;
+            vector<uchar> status;
+            vector<float> err;
             if(prevGray.empty())
                 gray.copyTo(prevGray);
             calcOpticalFlowPyrLK(prevGray, gray, points[0], points[1], status, err, winSize,
